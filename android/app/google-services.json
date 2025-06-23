@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "578373083632",
+    "project_id": "hackattack---neutrago",
+    "storage_bucket": "hackattack---neutrago.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578373083632:android:b3a27e69f3449eb146bd35",
+        "android_client_info": {
+          "package_name": "com.example.hackattack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbKYzjzSsOs3N47f3EESH-tB264mZuIOo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578373083632:android:686151af9a7d3a2e46bd35",
+        "android_client_info": {
+          "package_name": "com.example.neutrago"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbKYzjzSsOs3N47f3EESH-tB264mZuIOo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

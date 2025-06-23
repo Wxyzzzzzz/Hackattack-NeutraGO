@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'signup.dart';
 
 void main() {
   runApp(const NeutraGoApp());
@@ -212,7 +213,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // Handle create new account
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpScreen(),
+                          ),
+                        );
                       },
                       child: const Text(
                         'Create New',
