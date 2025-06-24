@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 import 'signup.dart';
+import 'services/auth_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const NeutraGoApp());
 }
 
@@ -15,8 +23,82 @@ class NeutraGoApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          if (snapshot.hasData && snapshot.data != null) {
+            // User is signed in, show home screen
+            return const HomeScreen();
+          }
+
+          // User is not signed in, show login screen
+          return const LoginScreen();
+        },
+      ),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF3F2E4),
+      appBar: AppBar(
+        title: const Text('Welcome to NeutraGO'),
+        backgroundColor: const Color(0xFF153462),
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await AuthService().signOut();
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (user?.photoURL != null)
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(user!.photoURL!),
+              ),
+            const SizedBox(height: 20),
+            Text(
+              'Welcome, ${user?.displayName ?? user?.email ?? 'User'}!',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF153462),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'You are successfully signed in!',
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFF707070),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -31,13 +113,85 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _authService.signInWithGoogle();
+      if (result == null) {
+        // User cancelled or error occurred
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Sign in cancelled or failed')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signInWithEmail() async {
+    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _authService.signInWithEmailAndPassword(
+        _usernameController.text,
+        _passwordController.text,
+      );
+
+      if (result == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Invalid email or password')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -175,9 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: double.infinity,
                       height: 52,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Handle login
-                        },
+                        onPressed: _isLoading ? null : _signInWithEmail,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF153462),
                           foregroundColor: Colors.white,
@@ -186,48 +338,88 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Login',
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
+                            : const Text(
+                                'Login',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Google Sign-In Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton.icon(
+                        onPressed: _isLoading ? null : _signInWithGoogle,
+                        icon: Image.network(
+                          'https://developers.google.com/identity/images/g-logo.png',
+                          height: 24,
+                          width: 24,
+                        ),
+                        label: const Text(
+                          'Sign in with Google',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            height: 1.5,
+                            color: Colors.black87,
                           ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black87,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            side: const BorderSide(color: Color(0xFFCCD6DD)),
+                          ),
+                          elevation: 0,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                // Sign up text
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(
-                        color: Color(0xFF7699D4),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUpScreen(),
+                    const SizedBox(height: 20),
+                    // Sign Up Link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Don't have an account? ",
+                          style: TextStyle(
+                            color: Color(0xFF707070),
+                            fontSize: 14,
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'Create New',
-                        style: TextStyle(
-                          color: Color(0xFF04438A),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
                         ),
-                      ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: Color(0xFF153462),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

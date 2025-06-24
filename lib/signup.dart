@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,7 +13,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -19,6 +23,91 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _signUpWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _authService.signInWithGoogle();
+      if (result == null) {
+        // User cancelled or error occurred
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Sign up cancelled or failed')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signUpWithEmail() async {
+    if (_emailController.text.isEmpty ||
+        _usernameController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password must be at least 6 characters')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _authService.createUserWithEmailAndPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (result == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to create account')),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account created successfully!')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -88,6 +177,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   child: TextField(
                     controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       hintText: 'Email Address',
                       hintStyle: TextStyle(
@@ -190,9 +280,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Handle sign up
-                    },
+                    onPressed: _isLoading ? null : _signUpWithEmail,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF153462),
                       foregroundColor: Colors.white,
@@ -201,27 +289,67 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Sign Up',
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              height: 1.5,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Google Sign-Up Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _signUpWithGoogle,
+                    icon: Image.network(
+                      'https://developers.google.com/identity/images/g-logo.png',
+                      height: 24,
+                      width: 24,
+                    ),
+                    label: const Text(
+                      'Sign up with Google',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        height: 1.5,
+                        color: Colors.black87,
                       ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                        side: const BorderSide(color: Color(0xFFCCD6DD)),
+                      ),
+                      elevation: 0,
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                // Bottom Link
+                const SizedBox(height: 20),
+                // Login Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
                       'Already have an account? ',
                       style: TextStyle(
-                        color: Color(0xFF7699D4),
+                        color: Color(0xFF707070),
                         fontSize: 14,
-                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     GestureDetector(
@@ -231,9 +359,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: const Text(
                         'Login',
                         style: TextStyle(
-                          color: Color(0xFF04438A),
+                          color: Color(0xFF153462),
                           fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
