@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'signup.dart';
 import 'services/auth_service.dart';
+import 'onboarding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,26 +24,7 @@ class NeutraGoApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-
-          if (snapshot.hasData && snapshot.data != null) {
-            // User is signed in, show home screen
-            return const HomeScreen();
-          }
-
-          // User is not signed in, show login screen
-          return const LoginScreen();
-        },
-      ),
+      home: const OnboardingScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -138,6 +120,20 @@ class _LoginScreenState extends State<LoginScreen> {
             const SnackBar(content: Text('Sign in cancelled or failed')),
           );
         }
+      } else {
+        // Show success dialog before redirect
+        if (mounted) {
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => LoginSuccessDialog(
+              onDone: () {
+                Navigator.of(context).pop();
+                // StreamBuilder will handle navigation
+              },
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -176,6 +172,20 @@ class _LoginScreenState extends State<LoginScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Invalid email or password')),
+          );
+        }
+      } else {
+        // Show success dialog before redirect
+        if (mounted) {
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => LoginSuccessDialog(
+              onDone: () {
+                Navigator.of(context).pop();
+                // StreamBuilder will handle navigation
+              },
+            ),
           );
         }
       }
@@ -427,6 +437,78 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class LoginSuccessDialog extends StatelessWidget {
+  final VoidCallback onDone;
+  const LoginSuccessDialog({required this.onDone, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: Colors.white,
+      child: SizedBox(
+        width: 327,
+        height: 425,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Circle with checkmark
+            Container(
+              width: 102,
+              height: 102,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F2E4),
+                shape: BoxShape.circle,
+              ),
+              child:
+                  const Icon(Icons.check, size: 56, color: Color(0xFF153462)),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              "Login Success!",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF102B23),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                "Thanks for logging in! You are now signed in to your account.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFFA0A8B0),
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: 183,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: onDone,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF153462),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                ),
+                child: const Text(
+                  "Done",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
