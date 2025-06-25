@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'services/auth_service.dart';
+import 'widgets/auth_wrapper.dart';
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -37,6 +39,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Sign up cancelled or failed')),
+          );
+        } 
+      } else {
+        if (mounted) {
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => SignUpSuccessDialog(
+              onDone: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const AuthWrapper()),
+                );
+              }
+            ),
           );
         }
       }
@@ -90,8 +107,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Account created successfully!')),
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => SignUpSuccessDialog(
+              onDone: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const AuthWrapper()),
+                );
+              }
+            ),
           );
         }
       }
@@ -262,7 +288,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           _isPasswordVisible
                               ? Icons.visibility_off
                               : Icons.visibility,
-                          color: Colors.black,
+                          color: const Color.fromRGBO(0, 0, 0, 1),
                           size: 19,
                         ),
                         onPressed: () {
@@ -371,6 +397,70 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpSuccessDialog extends StatelessWidget {
+  final VoidCallback onDone;
+  const SignUpSuccessDialog({required this.onDone, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: Colors.white,
+      child: SizedBox(
+        width: 327,
+        height: 425,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 102,
+              height: 102,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF3F2E4),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check, size: 56, color: Color(0xFF153462)),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              "Sign Up Success!",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF102B23),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                "Thanks for joining us! You can login to your account now.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Color(0xFFA0A8B0)),
+              ),
+            ),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: 183,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: onDone,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF153462),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                ),
+                child: const Text("Done", style: TextStyle(fontSize: 18, color: Colors.white)),
+              ),
+            ),
+          ],
         ),
       ),
     );
