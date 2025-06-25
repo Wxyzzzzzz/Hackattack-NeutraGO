@@ -17,25 +17,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'Track Your Carbon Footprint',
       description:
           'Effortlessly monitor your daily CO₂ emissions based on your travel habits.',
-      imageUrl: 'https://cdn.builder.io/api/v1/image/assets%2Fexample1.webp',
+      imageUrl: 'assets/onboarding/footprints.png',
     ),
     _OnboardingPageData(
       title: 'Automatic Trip Detection ',
       description:
           'Our smart system detects your travel mode—walk, car, train, and more without any manual input.',
-      imageUrl: 'https://cdn.builder.io/api/v1/image/assets%2Fexample2.webp',
+      imageUrl: 'assets/onboarding/car_road.png',
     ),
     _OnboardingPageData(
       title: 'Smart Trip Planning, Made Easy',
       description:
           'Plan your journey with ease.  Neutra GO suggests the best route tailored to your lifestyle.',
-      imageUrl: 'https://cdn.builder.io/api/v1/image/assets%2Fexample3.webp',
+      imageUrl: 'assets/onboarding/brain.png',
     ),
     _OnboardingPageData(
       title: 'Rewards for Greener Choices',
       description:
           'Earn badges, climb local leaderboards, and unlock real-world rewards by going green!',
-      imageUrl: 'https://cdn.builder.io/api/v1/image/assets%2Fexample4.webp',
+      imageUrl: 'assets/onboarding/trophy.png',
     ),
   ];
 
@@ -88,7 +88,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       // Image
                       SizedBox(
                         height: 250,
-                        child: Image.network(
+                        child: Image.asset(
                           page.imageUrl,
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) =>
