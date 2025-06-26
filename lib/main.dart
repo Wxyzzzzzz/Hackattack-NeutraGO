@@ -5,6 +5,8 @@ import 'firebase_options.dart';
 import 'signup.dart';
 import 'services/auth_service.dart';
 // import 'onboarding.dart';
+import 'reward_centre.dart';
+import 'trip_planning_main.dart';
 import 'widgets/auth_wrapper.dart';
 // import 'screens/login.dart';
 
@@ -76,7 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
             builder: (context) => LoginSuccessDialog(
               onDone: () {
                 Navigator.of(context).pop();
-                // StreamBuilder will handle navigation
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => const MainNavigationPage()),
+                  (route) => false,
+                );
               },
             ),
           );
@@ -130,7 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
             builder: (context) => LoginSuccessDialog(
               onDone: () {
                 Navigator.of(context).pop();
-                // StreamBuilder will handle navigation
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => const MainNavigationPage()),
+                  (route) => false,
+                );
               },
             ),
           );
@@ -457,6 +467,57 @@ class LoginSuccessDialog extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MainNavigationPage extends StatefulWidget {
+  const MainNavigationPage({Key? key}) : super(key: key);
+
+  @override
+  State<MainNavigationPage> createState() => _MainNavigationPageState();
+}
+
+class _MainNavigationPageState extends State<MainNavigationPage> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _pages = <Widget>[
+    HomeScreen(),
+    TripPlanningMainPage(),
+    RewardsCentrePage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFFF3F2E4),
+        selectedItemColor: const Color(0xFF153462),
+        unselectedItemColor: Colors.grey,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.eco_outlined),
+            label: 'Plant',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.card_giftcard),
+            label: 'Reward',
+          ),
+        ],
       ),
     );
   }
