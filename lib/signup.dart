@@ -342,8 +342,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 52,
                   child: ElevatedButton.icon(
                     onPressed: _isLoading ? null : _signUpWithGoogle,
-                    icon: Image.network(
-                      'https://developers.google.com/identity/images/g-logo.png',
+                    icon: Image.asset(
+                      // 'https://developers.google.com/identity/images/g-logo.png',
+                      'assets/login/g-logo.png',
                       height: 24,
                       width: 24,
                     ),

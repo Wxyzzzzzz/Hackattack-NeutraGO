@@ -149,6 +149,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     errorBuilder: (context, error, stackTrace) =>
                         const Icon(Icons.eco, size: 120, color: Color(0xFF7A9B5A)),
                   ),
+                  // SizedBox(
+                  //   width: 300,
+                  //   height: 300,
+                  // child: Image.asset(
+                  //     'assets/login/g-logo.png',
+                  //     fit: BoxFit.contain,
+                  
+                  // ),
                 ),
                 const SizedBox(height: 60),
                 Column(
@@ -265,8 +273,9 @@ class _LoginScreenState extends State<LoginScreen> {
       height: 52,
       child: ElevatedButton.icon(
         onPressed: _isLoading ? null : _signInWithGoogle,
-        icon: Image.network(
-          'https://developers.google.com/identity/images/g-logo.png',
+        icon: Image.asset(
+          //'https://developers.google.com/identity/images/g-logo.png',
+          'assets/login/g-logo.png',
           height: 24,
           width: 24,
         ),
