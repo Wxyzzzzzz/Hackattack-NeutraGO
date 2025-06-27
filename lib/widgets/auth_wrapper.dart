@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hackattack/main.dart';
 
 import '../screens/home.dart';
 import '../onboarding.dart';
@@ -19,7 +20,7 @@ class AuthWrapper extends StatelessWidget {
         }
 
         if (snapshot.hasData && snapshot.data != null) {
-          return const HomeScreen();
+          return const MainNavigationPage();
         } else {
           return const OnboardingScreen();
         }
