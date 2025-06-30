@@ -45,6 +45,15 @@ dependencies:
   # Firebase Core
   firebase_core: ^2.24.2
 
+  # Cloud Firestore
+  cloud_firestore: 4.14.0
+
+  # Fl chart
+  fl_chart: ^0.63.0
+
+  # Intl
+  intl: ^0.18.1
+
   geocoding: ^2.1.0
   flutter_google_places: ^0.3.0
   google_maps_webservice: 0.0.20-nullsafety.5
@@ -77,6 +86,7 @@ flutter:
     - assets/onboarding/car_road.png
     - assets/onboarding/brain.png
     - assets/onboarding/trophy.png
+    - assets/login/g-logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

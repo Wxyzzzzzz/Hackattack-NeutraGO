@@ -1,0 +1,157 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../widgets/carbon_footprint_card.dart';
+import '../widgets/footprint_chart.dart';
+import '../widgets/transportation_chart.dart';
+import '../widgets/action_buttons.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF3F2E4),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF3F2E4),
+        elevation: 0,
+        leading: null,
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Hi, ${user?.displayName ?? 'there'}!',
+              style: const TextStyle(
+                color: Color(0xFF153462),
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFFB5D3C7),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(
+                Icons.settings,
+                color: Color(0xFF153462),
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Carbon Footprint Card
+            const CarbonFootprintCard(),
+            const SizedBox(height: 16),
+            
+            // Settings Dropdown
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: const Color(0xFFCCD6DD)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.tune,
+                    color: Color(0xFF153462),
+                    size: 18,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    'Settings',
+                    style: TextStyle(
+                      color: Color(0xFF153462),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    '7 days',
+                    style: TextStyle(
+                      color: Color(0xFF707070),
+                      fontSize: 14,
+                    ),
+                  ),
+                  Spacer(),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xFF153462),
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // Line Chart
+            const FootprintChart(userId: 'jAENInMkzS0KvYyVSyJA'),
+            const SizedBox(height: 16),
+            
+            // Transportation Chart
+            const TransportationChart(userId: 'jAENInMkzS0KvYyVSyJA'),
+            const SizedBox(height: 16),
+            
+            // Action Buttons
+            const ActionButtons(),
+            const SizedBox(height: 30), // Space for bottom navigation
+          ],
+        ),
+      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: _selectedIndex,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _selectedIndex = index;
+      //     });
+      //   },
+      //   type: BottomNavigationBarType.fixed,
+      //   backgroundColor: Colors.white,
+      //   selectedItemColor: const Color(0xFF7A9B5A),
+      //   unselectedItemColor: const Color(0xFF707070),
+      //   showSelectedLabels: true,
+      //   showUnselectedLabels: false,
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.eco),
+      //       label: 'Trip',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.card_giftcard),
+      //       label: 'Rewards',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.person),
+      //       label: 'Profile',
+      //     ),
+      //   ],
+      // ),
+    );
+  }
+}
