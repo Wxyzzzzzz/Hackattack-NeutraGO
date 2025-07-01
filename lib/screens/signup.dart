@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
-import '../widgets/auth_wrapper.dart';
+// import '../widgets/auth_wrapper.dart';
+import '../main_navigation_page.dart';
 
 
 class SignUpScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onDone: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const AuthWrapper()),
+                  MaterialPageRoute(builder: (context) => const MainNavigationPage()),
                 );
               }
             ),
@@ -114,7 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onDone: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const AuthWrapper()),
+                  MaterialPageRoute(builder: (context) => const MainNavigationPage()),
                 );
               }
             ),

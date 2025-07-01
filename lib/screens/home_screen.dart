@@ -4,6 +4,7 @@ import '../widgets/carbon_footprint_card.dart';
 import '../widgets/footprint_chart.dart';
 import '../widgets/transportation_chart.dart';
 import '../widgets/action_buttons.dart';
+import 'past_trips_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,17 +38,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFFB5D3C7),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Icon(
-                Icons.settings,
-                color: Color(0xFF153462),
-                size: 20,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PastTripsScreen()),
+                );
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB5D3C7),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.history,
+                  color: Color(0xFF153462),
+                  size: 20,
+                ),
               ),
             ),
           ],

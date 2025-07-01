@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hackattack/screens/home_screen.dart';
 import '../widgets/trip_card.dart';
 import '../widgets/date_selector.dart';
 
@@ -19,6 +20,31 @@ class PastTripsScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Positioned(
+                    left: 19,
+                    child: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Color(0xFF153462),
+                        size: 27,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  // Container(
+                  //     width: 40,
+                  //     height: 40,
+                  //     decoration: BoxDecoration(
+                  //       color: const Color(0xFFB5D3C7),
+                  //       borderRadius: BorderRadius.circular(20),
+                  //     ),
+                  //     child: const Icon(
+                  //       Icons.arrow_back,
+                  //       color: Color(0xFF153462),
+                  //       size: 20,
+                  //     ),
+                  //   ),
                   // const Spacer(),
                   const Text(
                     'Past Trips',
@@ -29,18 +55,18 @@ class PastTripsScreen extends StatelessWidget {
                       fontFamily: 'Open Sans',
                     ),
                   ),
-                  // const Spacer(),
-                  // Positioned(
-                  //   right: 19,
-                  //   child: IconButton(
-                  //     onPressed: () {},
-                  //     icon: const Icon(
-                  //       Icons.calendar_today,
-                  //       color: Color(0xFF153462),
-                  //       size: 27,
-                  //     ),
-                  //   ),
-                  // ),
+                  const Spacer(),
+                  Positioned(
+                    right: 19,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.question_answer,
+                        color: const Color(0xFFF3F2E3),
+                        size: 27,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -84,34 +110,7 @@ class PastTripsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF22866E),
-        unselectedItemColor: const Color(0xFF9A9A9A),
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        currentIndex: 1, // Planner is selected
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.eco),
-            label: 'Planner',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard_outlined),
-            label: 'Rewards',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
-      ),
+      )
     );
   }
 }

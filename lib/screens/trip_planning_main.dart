@@ -3,8 +3,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+// import 'running_model.dart';
+import 'rout_api_call.dart';
 
 class TripPlanningMainPage extends StatefulWidget {
   const TripPlanningMainPage({Key? key}) : super(key: key);
@@ -22,7 +26,15 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
   List<dynamic> _placePredictions = [];
   bool _showSuggestions = false;
   // Example initial position (Penang, Malaysia)
-  final LatLng _center = const LatLng(5.4164, 100.3327);
+  LatLng _currentMapCenter = const LatLng(5.3600, 100.3020);
+  String _selectedDestinationType = '';
+  LatLng? _selectedDestination;
+
+  @override
+  void initState() {
+    super.initState();
+    // _getCurrentLocation();
+  }
 
   @override
   void dispose() {
@@ -34,6 +46,51 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
+
+  void _selectDestinationType(String type) {
+    setState(() {
+      _selectedDestinationType = type;
+    });
+  }
+
+  // Future<void> _getCurrentLocation() async {
+  //   bool serviceEnabled;
+  //   LocationPermission permission;
+
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     return;
+  //   }
+
+  //   permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.denied) return;
+  //   }
+
+  //   if (permission == LocationPermission.deniedForever) return;
+
+  //   final position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  //   final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+
+  //   setState(() {
+  //     _currentMapCenter = currentLatLng;
+
+  //     // ✅ Add a marker for current location
+  //     _markers.removeWhere((m) => m.markerId == MarkerId('current_location'));
+  //     _markers.add(
+  //       Marker(
+  //         markerId: const MarkerId('current_location'),
+  //         position: currentLatLng,
+  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+  //         infoWindow: const InfoWindow(title: 'You are here'),
+  //       ),
+  //     );
+  //   });
+
+  //   mapController.animateCamera(CameraUpdate.newLatLngZoom(currentLatLng, 15));
+  // }
 
   Future<void> _onSearchChanged(String value) async {
     if (value.isEmpty) {
@@ -74,6 +131,7 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
       final LatLng position = LatLng(lat, lng);
       mapController.animateCamera(CameraUpdate.newLatLng(position));
       setState(() {
+        _selectedDestination = position;
         _searchController.text = name;
         _markers.clear();
         _markers.add(
@@ -100,10 +158,30 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
           children: [
             Column(
               children: [
+                Container(
+                  height: 60,
+                  alignment: Alignment.center,
+                  color: const Color(0xFFF3F2E3),
+                  child: const Text(
+                    'Trip Planning',
+                    style: TextStyle(
+                      color: Color(0xFF153462),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                            
+                // Blue line under header
+                Container(
+                  height: 3,
+                  color: const Color(0xFF153462),
+                ),
+
                 // Map area
                 Container(
                   width: double.infinity,
-                  height: 400, // Adjust as needed for your layout
+                  height: 410, // Adjust as needed for your layout
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(0),
@@ -113,7 +191,7 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                     child: GoogleMap(
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
-                        target: _center,
+                        target: _currentMapCenter,
                         zoom: 13.0,
                       ),
                       myLocationEnabled: true,
@@ -134,10 +212,10 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                         Positioned(
                           left: 1,
                           right: 1,
-                          top: 20,
+                          top: 0,
                           child: Container(
                             width: 402,
-                            height: 288,
+                            height: 328,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -173,78 +251,197 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                                   ),
                                   const SizedBox(height: 24),
                                   // Three horizontally arranged cards
+                                  // Row(
+                                  //   mainAxisAlignment:
+                                  //       MainAxisAlignment.spaceBetween,
+                                  //   children: [
+                                  //     _TripCard(
+                                  //       label: 'Home',
+                                  //       color: const Color(0xFFBADCBC),
+                                  //     ),
+                                  //     _TripCard(
+                                  //       label: 'Office',
+                                  //       color: const Color(0xFFBADCBC),
+                                  //     ),
+                                  //     _TripCard(
+                                  //       label: 'Others',
+                                  //       color: const Color(0xFFBADCBC),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      _TripCard(
+                                      _DestinationTypeButton(
+                                        icon: Icons.home,
                                         label: 'Home',
-                                        color: const Color(0xFFBADCBC),
+                                        isSelected: _selectedDestinationType == 'Home',
+                                        onTap: () => _selectDestinationType('Home'),
                                       ),
-                                      _TripCard(
+                                      _DestinationTypeButton(
+                                        icon: Icons.business,
                                         label: 'Office',
-                                        color: const Color(0xFFBADCBC),
+                                        isSelected: _selectedDestinationType == 'Office',
+                                        onTap: () => _selectDestinationType('Office'),
                                       ),
-                                      _TripCard(
+                                      _DestinationTypeButton(
+                                        icon: Icons.star,
+                                        label: 'Saved',
+                                        isSelected: _selectedDestinationType == 'Saved',
+                                        onTap: () => _selectDestinationType('Saved'),
+                                      ),
+                                      _DestinationTypeButton(
+                                        icon: Icons.add,
                                         label: 'Others',
-                                        color: const Color(0xFFBADCBC),
+                                        isSelected: _selectedDestinationType == 'Others',
+                                        onTap: () => _selectDestinationType('Others'),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 24),
                                   // Search bar for destination (only show here if not focused)
-                                  if (!_searchFocusNode.hasFocus)
-                                    Container(
-                                      width: double.infinity,
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFD9D9D9),
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          const SizedBox(width: 16),
-                                          const Icon(Icons.place,
-                                              color: Color(0xFFC81C1C)),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: TextField(
-                                              controller: _searchController,
-                                              focusNode: _searchFocusNode,
-                                              decoration: const InputDecoration(
-                                                hintText:
-                                                    'Enter a place you want to go',
-                                                border: InputBorder.none,
+                                  // if (!_searchFocusNode.hasFocus)
+                                  //   Container(
+                                  //     width: double.infinity,
+                                  //     height: 56,
+                                  //     decoration: BoxDecoration(
+                                  //       color: const Color(0xFFD9D9D9),
+                                  //       borderRadius: BorderRadius.circular(15),
+                                  //     ),
+                                  //     child: Row(
+                                  //       children: [
+                                  //         const SizedBox(width: 16),
+                                  //         const Icon(Icons.place,
+                                  //             color: Color(0xFFC81C1C)),
+                                  //         const SizedBox(width: 12),
+                                  //         Expanded(
+                                  //           child: TextField(
+                                  //             controller: _searchController,
+                                  //             focusNode: _searchFocusNode,
+                                  //             decoration: const InputDecoration(
+                                  //               hintText:
+                                  //                   'Enter a place you want to go',
+                                  //               border: InputBorder.none,
+                                  //             ),
+                                  //             onChanged: _onSearchChanged,
+                                  //           ),
+                                  //         ),
+                                  //         IconButton(
+                                  //           icon: const Icon(Icons.search,
+                                  //               color: Color(0xFF153462)),
+                                  //           onPressed: () => _onSearchChanged(
+                                  //               _searchController.text),
+                                  //         ),
+                                  //         const SizedBox(width: 8),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // Search bar for destination (only show here if not focused)
+                                if (!_searchFocusNode.hasFocus)
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // 🔍 Search Bar
+                                      Container(
+                                        width: double.infinity,
+                                        height: 56,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFD9D9D9),
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(width: 16),
+                                            const Icon(Icons.place, color: Color(0xFFC81C1C)),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: TextField(
+                                                controller: _searchController,
+                                                focusNode: _searchFocusNode,
+                                                decoration: const InputDecoration(
+                                                  hintText: 'Enter a place you want to go',
+                                                  border: InputBorder.none,
+                                                ),
+                                                onChanged: _onSearchChanged,
                                               ),
-                                              onChanged: _onSearchChanged,
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.search, color: Color(0xFF153462)),
+                                              onPressed: () =>
+                                                  _onSearchChanged(_searchController.text),
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                        ),
+                                      ),
+
+                                      // 🧭 "Go" Button — only show if a destination is selected
+                                      if (_selectedDestination != null)
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 12),
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 90,
+                                              height: 48,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Color.fromARGB(255, 20, 97, 61),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(12),
+                                                  ),
+                                                ),
+                                                onPressed: () async {
+                                                  // Get current position
+                                                  // final position = await Geolocator.getCurrentPosition(
+                                                  //     desiredAccuracy: LocationAccuracy.high);
+
+                                                  const LatLng currentLatLng = const LatLng(5.3573, 100.3034);
+                                                  // final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+                                                  final DateTime timestamp = DateTime.now();
+                                                  final String userId = 'user_001'; // Replace with actual user ID if needed
+
+                                                  if (!mounted) return; 
+
+                                                  // Animate camera to destination
+                                                  mapController.animateCamera(
+                                                    CameraUpdate.newLatLngZoom(_selectedDestination!, 16),
+                                                  );
+
+                                                  // Navigate to summary page
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => RunningModel(
+                                                        userId: userId,
+                                                        timestamp: timestamp,
+                                                        currentLocation: currentLatLng,
+                                                        destination: _selectedDestination!,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: const Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(Icons.directions, color: Colors.white, size: 18),
+                                                    SizedBox(width: 6),
+                                                    Text(
+                                                      'Go',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                          IconButton(
-                                            icon: const Icon(Icons.search,
-                                                color: Color(0xFF153462)),
-                                            onPressed: () => _onSearchChanged(
-                                                _searchController.text),
-                                          ),
-                                          const SizedBox(width: 8),
-                                        ],
-                                      ),
-                                    ),
+                                        ),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ),
-                          ),
-                        ),
-                        // Home Indicator (bottom bar)
-                        Positioned(
-                          left: 134,
-                          right: 134,
-                          bottom: 24,
-                          child: Container(
-                            width: 134,
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(100),
                             ),
                           ),
                         ),
@@ -358,6 +555,54 @@ class _TripCard extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Color(0xFF1E1E1E),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class _DestinationTypeButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _DestinationTypeButton({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 78,
+        height: 62,
+        decoration: BoxDecoration(
+          color: const Color(0xFFBAD1C1),
+          borderRadius: BorderRadius.circular(10),
+          border: isSelected
+              ? Border.all(color: Colors.black, width: 2)
+              : Border.all(color: Colors.transparent),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.black),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

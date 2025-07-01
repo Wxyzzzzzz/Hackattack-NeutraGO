@@ -23,11 +23,15 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        if (snapshot.hasData && snapshot.data != null) {
-          return const MainNavigationPage();
-        } else {
-          return const OnboardingScreen();
-        }
+        return const OnboardingScreen();
+
+        // if (snapshot.hasData && snapshot.data != null) {
+        //   return const MainNavigationPage();
+        // } else {
+        //   return const OnboardingScreen();
+        // }
+
+        
       },
     );
   }

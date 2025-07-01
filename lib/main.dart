@@ -17,6 +17,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Logger.root.level = Level.ALL; // Show all logs
+  // Logger.root.onRecord.listen((record) {
+  //   print('${record.level.name}: ${record.time}: ${record.message}');
+  // });
+
   runApp(const NeutraGoApp());
 }
 
