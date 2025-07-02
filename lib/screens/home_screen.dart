@@ -7,13 +7,6 @@ import '../widgets/action_buttons.dart';
 import 'past_trips_screen.dart';
 import 'package:flutter_activity_recognition/flutter_activity_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'dart:isolate';
-
-// Top-level callback for foreground task
-void startCallback() {
-  FlutterForegroundTask.setTaskHandler(ActivityBackgroundTask());
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _initActivityRecognition();
-    _startForegroundTask();
   }
 
   Future<void> _initActivityRecognition() async {
@@ -78,14 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       return 'Current Activity: $_currentActivity';
     }
-  }
-
-  void _startForegroundTask() {
-    FlutterForegroundTask.startService(
-      notificationTitle: 'Activity Recognition Running',
-      notificationText: 'Detecting your activity in the background.',
-      callback: startCallback,
-    );
   }
 
   @override
@@ -267,35 +251,4 @@ class _HomeScreenState extends State<HomeScreen> {
       // ),
     );
   }
-}
-
-class ActivityBackgroundTask extends TaskHandler {
-  Stream<Activity>? _activityStream;
-  late final FlutterActivityRecognition _activityRecognition;
-
-  @override
-  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
-    _activityRecognition = FlutterActivityRecognition.instance;
-    _activityStream = _activityRecognition.activityStream;
-    _activityStream?.listen((activity) {
-      print('[Background] Activity: ${activity.type}');
-      // Optionally send data to main isolate:
-      // sendPort?.send(activity.type.toString());
-    });
-  }
-
-  @override
-  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {}
-
-  @override
-  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {}
-
-  @override
-  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {}
-
-  @override
-  void onButtonPressed(String id) {}
-
-  @override
-  void onNotificationPressed() {}
 }
