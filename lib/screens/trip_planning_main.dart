@@ -26,14 +26,15 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
   List<dynamic> _placePredictions = [];
   bool _showSuggestions = false;
   // Example initial position (Penang, Malaysia)
-  LatLng _currentMapCenter = const LatLng(5.3600, 100.3020);
+  // LatLng _currentMapCenter = const LatLng(5.3600, 100.3020);
+  LatLng? _currentMapCenter;
   String _selectedDestinationType = '';
   LatLng? _selectedDestination;
 
   @override
   void initState() {
     super.initState();
-    // _getCurrentLocation();
+    _getCurrentLocation();
   }
 
   @override
@@ -53,44 +54,44 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
     });
   }
 
-  // Future<void> _getCurrentLocation() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     return;
-  //   }
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
 
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) return;
-  //   }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
 
-  //   if (permission == LocationPermission.deniedForever) return;
+    if (permission == LocationPermission.deniedForever) return;
 
-  //   final position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
 
-  //   setState(() {
-  //     _currentMapCenter = currentLatLng;
+    setState(() {
+      _currentMapCenter = currentLatLng;
 
-  //     // ✅ Add a marker for current location
-  //     _markers.removeWhere((m) => m.markerId == MarkerId('current_location'));
-  //     _markers.add(
-  //       Marker(
-  //         markerId: const MarkerId('current_location'),
-  //         position: currentLatLng,
-  //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-  //         infoWindow: const InfoWindow(title: 'You are here'),
-  //       ),
-  //     );
-  //   });
+      // ✅ Add a marker for current location
+      _markers.removeWhere((m) => m.markerId == MarkerId('current_location'));
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('current_location'),
+          position: currentLatLng,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          infoWindow: const InfoWindow(title: 'You are here'),
+        ),
+      );
+    });
 
-  //   mapController.animateCamera(CameraUpdate.newLatLngZoom(currentLatLng, 15));
-  // }
+    mapController.animateCamera(CameraUpdate.newLatLngZoom(currentLatLng, 15));
+  }
 
   Future<void> _onSearchChanged(String value) async {
     if (value.isEmpty) {
@@ -158,19 +159,19 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
           children: [
             Column(
               children: [
-                Container(
-                  height: 60,
-                  alignment: Alignment.center,
-                  color: const Color(0xFFF3F2E3),
-                  child: const Text(
-                    'Trip Planning',
-                    style: TextStyle(
-                      color: Color(0xFF153462),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   height: MediaQuery.of(context).size.height * 0.05,
+                //   alignment: Alignment.center,
+                //   color: const Color(0xFFF3F2E3),
+                //   child: const Text(
+                //     'Trip Planning',
+                //     style: TextStyle(
+                //       color: Color(0xFF153462),
+                //       fontSize: 20,
+                //       fontWeight: FontWeight.w600,
+                //     ),
+                //   ),
+                // ),
                             
                 // Blue line under header
                 Container(
@@ -181,7 +182,7 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                 // Map area
                 Container(
                   width: double.infinity,
-                  height: 410, // Adjust as needed for your layout
+                  height: MediaQuery.of(context).size.height * 0.3, // Adjust as needed for your layout
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(0),
@@ -191,7 +192,7 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                     child: GoogleMap(
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
-                        target: _currentMapCenter,
+                        target: _currentMapCenter ?? const LatLng(5.36, 100.302),
                         zoom: 13.0,
                       ),
                       myLocationEnabled: true,
@@ -227,7 +228,7 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                                 ),
                               ],
                             ),
-                            child: Padding(
+                            child: SingleChildScrollView(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 24),
                               child: Column(
@@ -392,11 +393,11 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                                                 ),
                                                 onPressed: () async {
                                                   // Get current position
-                                                  // final position = await Geolocator.getCurrentPosition(
-                                                  //     desiredAccuracy: LocationAccuracy.high);
+                                                  final position = await Geolocator.getCurrentPosition(
+                                                      desiredAccuracy: LocationAccuracy.high);
 
-                                                  const LatLng currentLatLng = const LatLng(5.3573, 100.3034);
-                                                  // final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+                                                  // const LatLng currentLatLng = const LatLng(5.3573, 100.3034);
+                                                  final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
                                                   final DateTime timestamp = DateTime.now();
                                                   final String userId = 'user_001'; // Replace with actual user ID if needed
 

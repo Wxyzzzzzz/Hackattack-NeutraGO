@@ -35,7 +35,7 @@ class _RunningModelState extends State<RunningModel> {
   }
 
   Future<void> fetchRecommendation() async {
-    final url = Uri.parse("http://10.0.2.2:8000/recommend"); // replace with actual backend URL
+    final url = Uri.parse("http://192.168.100.6:8000/recommend"); // replace with actual backend URL
 
     final body = {
       "user_id": "jAENInMkzS0KvYyVSyJA",

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'trip_planning_main.dart';
+import 'routing_screen.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final List<dynamic> recommendations;
@@ -26,6 +27,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   late GoogleMapController mapController;
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
+  int currentRouteIndex = 0;
 
   @override
   void initState() {
@@ -34,6 +36,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   }
 
   void _setupMapData() {
+    _markers.clear();
+    _polylines.clear();
+
     _markers.addAll([
       Marker(
         markerId: const MarkerId('start'),
@@ -47,46 +52,68 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       ),
     ]);
 
+  // Draw polyline from recommended route
+  if (widget.recommendations.isNotEmpty) {
+    final recommendation = widget.recommendations[currentRouteIndex]; // top-ranked route
+    final List<dynamic> coords = recommendation['polyline_points'];
+
+    final List<LatLng> polylinePoints = coords.map<LatLng>((coord) {
+      return LatLng(coord[0], coord[1]); // Convert each [lat, lng] to LatLng
+    }).toList();
+
+    _polylines.add(
+      Polyline(
+        polylineId: PolylineId('route_$currentRouteIndex'),
+        points: polylinePoints,
+        color: Colors.blueAccent,
+        width: 3,
+      ),
+    );
+  } 
+  // else {
+  //   // Fallback: straight line
   //   _polylines.add(
   //     Polyline(
-  //       polylineId: const PolylineId('route'),
+  //       polylineId: const PolylineId('fallback_route'),
   //       points: [widget.startLocation, widget.endLocation],
-  //       color: Colors.black,
+  //       color: Colors.grey,
   //       width: 3,
   //     ),
   //   );
   // }
-        // Get polyline points from the first recommendation
-        if (widget.recommendations.isNotEmpty) {
-          final List<dynamic> polylinePoints = widget.recommendations[0]['polyline_points'];
-          final List<LatLng> latLngPoints = polylinePoints
-              .map<LatLng>((point) => LatLng(point[0], point[1]))
-              .toList();
-
-          _polylines.add(
-            Polyline(
-              polylineId: const PolylineId('route'),
-              points: latLngPoints,
-              color: Colors.grey,
-              width: 5,
-            ),
-          );
-        } else {
-          // Fallback: draw a direct line if no polyline available
-          _polylines.add(
-            Polyline(
-              polylineId: const PolylineId('route'),
-              points: [widget.startLocation, widget.endLocation],
-              color: Colors.grey,
-              width: 3,
-            ),
-          );
-        }
-      }
+}
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+
+    // Zoom into current route
+    final polylinePoints = widget.recommendations[currentRouteIndex]['polyline_points'];
+    if (polylinePoints.isNotEmpty) {
+      final bounds = _createBoundsFromPoints(polylinePoints);
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+    }
   }
+
+  LatLngBounds _createBoundsFromPoints(List<dynamic> points) {
+  final latLngList = points.map((e) => LatLng(e[0], e[1])).toList();
+
+  double south = latLngList.first.latitude;
+  double north = latLngList.first.latitude;
+  double west = latLngList.first.longitude;
+  double east = latLngList.first.longitude;
+
+  for (var point in latLngList) {
+    south = point.latitude < south ? point.latitude : south;
+    north = point.latitude > north ? point.latitude : north;
+    west = point.longitude < west ? point.longitude : west;
+    east = point.longitude > east ? point.longitude : east;
+  }
+
+  return LatLngBounds(
+    southwest: LatLng(south, west),
+    northeast: LatLng(north, east),
+  );
+}
 
   IconData getTransportIcon(String mode) {
     switch (mode.toLowerCase()) {
@@ -184,60 +211,165 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                     topRight: Radius.circular(16),
                   ),
                 ),
-                // child: Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                  // children: [
-                  //   if (bestRoute != null) ...[
-                  //     const Text('Best Route',
-                  //         style: TextStyle(
-                  //             fontSize: 18,
-                  //             fontWeight: FontWeight.w700,
-                  //             color: Color(0xFF1E1E1E))),
-                  //     const SizedBox(height: 16),
-                  //     _buildRouteCard(bestRoute),
-                  //     const SizedBox(height: 24),
-                  //   ],
+  //               // child: Column(
+  //               //   crossAxisAlignment: CrossAxisAlignment.start,
+  //                 // children: [
+  //                 //   if (bestRoute != null) ...[
+  //                 //     const Text('Best Route',
+  //                 //         style: TextStyle(
+  //                 //             fontSize: 18,
+  //                 //             fontWeight: FontWeight.w700,
+  //                 //             color: Color(0xFF1E1E1E))),
+  //                 //     const SizedBox(height: 16),
+  //                 //     _buildRouteCard(bestRoute),
+  //                 //     const SizedBox(height: 24),
+  //                 //   ],
+  //                 child: SingleChildScrollView(
+  //                 padding: const EdgeInsets.all(24),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     if (bestRoute != null) ...[
+  //                       const Text('Best Route',
+  //                           style: TextStyle(
+  //                               fontSize: 18,
+  //                               fontWeight: FontWeight.w700,
+  //                               color: Color(0xFF1E1E1E))),
+  //                       const SizedBox(height: 16),
+  //                       _buildRouteCard(bestRoute),
+  //                       const SizedBox(height: 24),
+  //                     ],
+
+  //                     if (otherRoutes.isNotEmpty) ...[
+  //                       const Text('Other Routes',
+  //                           style: TextStyle(
+  //                               fontSize: 18,
+  //                               fontWeight: FontWeight.w700,
+  //                               color: Color(0xFF1E1E1E))),
+  //                       const SizedBox(height: 16),
+  //                       for (var route in otherRoutes) _buildSimpleRouteCard(route),
+  //                     ]
+  //                   ],
+  //                 ),
+
+  //                 //   if (otherRoutes.isNotEmpty) ...[
+  //                 //     const Text('Other Routes',
+  //                 //         style: TextStyle(
+  //                 //             fontSize: 18,
+  //                 //             fontWeight: FontWeight.w700,
+  //                 //             color: Color(0xFF1E1E1E))),
+  //                 //     const SizedBox(height: 16),
+  //                 //     for (var route in otherRoutes) _buildSimpleRouteCard(route),
+  //                 //   ]
+  //                 // ],
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
                   child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (bestRoute != null) ...[
-                        const Text('Best Route',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1E1E1E))),
-                        const SizedBox(height: 16),
-                        _buildRouteCard(bestRoute),
-                        const SizedBox(height: 24),
-                      ],
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // === Route Switcher Buttons ===
+                          if (widget.recommendations.length > 1) ...[
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: List.generate(widget.recommendations.length, (index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          currentRouteIndex = index;
+                                          _setupMapData(); // Updates markers & polyline
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: currentRouteIndex == index
+                                            ? Colors.deepPurple
+                                            : Colors.grey,
+                                      ),
+                                      child: Text('Route ${index + 1}'),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
 
-                      if (otherRoutes.isNotEmpty) ...[
-                        const Text('Other Routes',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1E1E1E))),
-                        const SizedBox(height: 16),
-                        for (var route in otherRoutes) _buildSimpleRouteCard(route),
-                      ]
-                    ],
+                          // === Best Route Section ===
+                          if (bestRoute != null) ...[
+                            const Text('Best Route',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF1E1E1E))),
+                            const SizedBox(height: 16),
+                            _buildRouteCard(bestRoute),
+                            const SizedBox(height: 24),
+                          ],
+
+                          // === Other Routes Section ===
+                          if (otherRoutes.isNotEmpty) ...[
+                            const Text('Other Routes',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF1E1E1E))),
+                            const SizedBox(height: 16),
+                            for (var route in otherRoutes) _buildSimpleRouteCard(route),
+                          ]
+                        ],
+                      ),
+                    ),
                   ),
-
-                  //   if (otherRoutes.isNotEmpty) ...[
-                  //     const Text('Other Routes',
-                  //         style: TextStyle(
-                  //             fontSize: 18,
-                  //             fontWeight: FontWeight.w700,
-                  //             color: Color(0xFF1E1E1E))),
-                  //     const SizedBox(height: 16),
-                  //     for (var route in otherRoutes) _buildSimpleRouteCard(route),
-                  //   ]
-                  // ],
                 ),
-              ),
-            ),
+
+
+                // Fixed Go button at bottom center
+                Positioned(
+                  bottom: 16,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        final selectedRoute = widget.recommendations[currentRouteIndex];
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RoutingScreen(
+                              // pathCoordinates: selectedRoute['polyline_points'],
+                              // startLocation: widget.startLocation,
+                              polylineCoordinates: selectedRoute['polyline_points'],
+                              destination: widget.endLocation,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.directions),
+                      label: const Text("Go"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[700],
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              
+          
           ],
         ),
       ),
