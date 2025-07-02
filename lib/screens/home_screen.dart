@@ -5,6 +5,15 @@ import '../widgets/footprint_chart.dart';
 import '../widgets/transportation_chart.dart';
 import '../widgets/action_buttons.dart';
 import 'past_trips_screen.dart';
+import 'package:flutter_activity_recognition/flutter_activity_recognition.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'dart:isolate';
+
+// Top-level callback for foreground task
+void startCallback() {
+  FlutterForegroundTask.setTaskHandler(ActivityBackgroundTask());
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +24,69 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   // int _selectedIndex = 0;
+
+  final FlutterActivityRecognition _activityRecognition =
+      FlutterActivityRecognition.instance;
+  Stream<Activity>? _activityStream;
+  String _currentActivity = 'Unknown';
+
+  @override
+  void initState() {
+    super.initState();
+    _initActivityRecognition();
+    _startForegroundTask();
+  }
+
+  Future<void> _initActivityRecognition() async {
+    ActivityPermission permission =
+        await _activityRecognition.checkPermission();
+    if (permission == ActivityPermission.DENIED) {
+      permission = await _activityRecognition.requestPermission();
+    }
+    if (permission == ActivityPermission.GRANTED) {
+      _activityStream = _activityRecognition.activityStream;
+      _activityStream!.listen(
+        (activity) {
+          print('Activity event received: ${activity.type}');
+          setState(() {
+            _currentActivity = activity.type.toString().split('.').last;
+          });
+        },
+        onError: (error) {
+          print('Activity stream error: $error');
+          setState(() {
+            _currentActivity = 'Error: $error';
+          });
+        },
+        cancelOnError: false,
+      );
+    } else {
+      print('Activity Recognition Permission: $permission');
+      setState(() {
+        _currentActivity = 'Permission Denied';
+      });
+    }
+  }
+
+  String _userFriendlyActivityMessage() {
+    if (_currentActivity.startsWith('Error:') ||
+        _currentActivity == 'Unknown') {
+      return 'Activity recognition is not available on your device.';
+    } else if (_currentActivity == 'Permission Denied' ||
+        _currentActivity == 'Permission Permanently Denied') {
+      return 'Activity recognition permission is denied.';
+    } else {
+      return 'Current Activity: $_currentActivity';
+    }
+  }
+
+  void _startForegroundTask() {
+    FlutterForegroundTask.startService(
+      notificationTitle: 'Activity Recognition Running',
+      notificationText: 'Detecting your activity in the background.',
+      callback: startCallback,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PastTripsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const PastTripsScreen()),
                 );
               },
               child: Container(
@@ -67,10 +140,41 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Activity Recognition Display
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: const Color(0xFFCCD6DD)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.directions_walk,
+                    color: Color(0xFF153462),
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _userFriendlyActivityMessage(),
+                      style: const TextStyle(
+                        color: Color(0xFF707070),
+                        fontSize: 14,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             // Carbon Footprint Card
             const CarbonFootprintCard(),
             const SizedBox(height: 16),
-            
+
             // Settings Dropdown
             Container(
               width: double.infinity,
@@ -114,15 +218,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Line Chart
             const FootprintChart(userId: 'jAENInMkzS0KvYyVSyJA'),
             const SizedBox(height: 16),
-            
+
             // Transportation Chart
             const TransportationChart(userId: 'jAENInMkzS0KvYyVSyJA'),
             const SizedBox(height: 16),
-            
+
             // Action Buttons
             const ActionButtons(),
             const SizedBox(height: 30), // Space for bottom navigation
@@ -163,4 +267,35 @@ class _HomeScreenState extends State<HomeScreen> {
       // ),
     );
   }
+}
+
+class ActivityBackgroundTask extends TaskHandler {
+  Stream<Activity>? _activityStream;
+  late final FlutterActivityRecognition _activityRecognition;
+
+  @override
+  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
+    _activityRecognition = FlutterActivityRecognition.instance;
+    _activityStream = _activityRecognition.activityStream;
+    _activityStream?.listen((activity) {
+      print('[Background] Activity: ${activity.type}');
+      // Optionally send data to main isolate:
+      // sendPort?.send(activity.type.toString());
+    });
+  }
+
+  @override
+  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {}
+
+  @override
+  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {}
+
+  @override
+  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {}
+
+  @override
+  void onButtonPressed(String id) {}
+
+  @override
+  void onNotificationPressed() {}
 }
