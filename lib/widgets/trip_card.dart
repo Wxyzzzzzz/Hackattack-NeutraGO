@@ -149,7 +149,7 @@ class TripCard extends StatelessWidget {
 
                         // End Location
                         Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(
                             endLocation,
                             style: const TextStyle(
