@@ -7,6 +7,7 @@ import '../widgets/action_buttons.dart';
 import 'past_trips_screen.dart';
 import 'package:flutter_activity_recognition/flutter_activity_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,11 +23,44 @@ class _HomeScreenState extends State<HomeScreen> {
       FlutterActivityRecognition.instance;
   Stream<Activity>? _activityStream;
   String _currentActivity = 'Unknown';
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
     super.initState();
+    _initializeNotifications();
     _initActivityRecognition();
+  }
+
+  Future<void> _initializeNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _showActivityNotification(String activity) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'activity_channel',
+      'Activity Changes',
+      channelDescription: 'Notification channel for activity changes',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      'Activity Changed',
+      'Detected activity: $activity',
+      platformChannelSpecifics,
+    );
   }
 
   Future<void> _initActivityRecognition() async {
@@ -43,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             _currentActivity = activity.type.toString().split('.').last;
           });
+          _showActivityNotification(_currentActivity);
         },
         onError: (error) {
           print('Activity stream error: $error');
