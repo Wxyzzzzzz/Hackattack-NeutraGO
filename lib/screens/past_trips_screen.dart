@@ -37,12 +37,7 @@ class _PastTripsScreenState extends State<PastTripsScreen> {
                     icon:
                         const Icon(Icons.arrow_back, color: Color(0xFF153462)),
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomeScreen()),
-                        (route) => false,
-                      );
+                      Navigator.pop(context);
                     },
                   ),
                   const Spacer(),
@@ -141,48 +136,6 @@ class _PastTripsScreenState extends State<PastTripsScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF22866E),
-        unselectedItemColor: const Color(0xFF9A9A9A),
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        currentIndex: 1, // Planner is selected
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-              (route) => false,
-            );
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const RewardsCentrePage()),
-            );
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.eco),
-            label: 'Planner',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard_outlined),
-            label: 'Rewards',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }
