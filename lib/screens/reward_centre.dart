@@ -137,17 +137,21 @@ class RewardsCentrePage extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 children: const [
-                  _MerchantCircle(name: 'Starbucks'),
+                  _MerchantCircle(
+                      name: 'Petronas', imagePath: 'assets/petronus.jpg'),
                   SizedBox(width: 24),
-                  _MerchantCircle(name: 'McDonalds'),
+                  _MerchantCircle(name: 'Lotus', imagePath: 'assets/lotus.jpg'),
                   SizedBox(width: 24),
-                  _MerchantCircle(name: 'KFC'),
+                  _MerchantCircle(name: 'KFC', imagePath: 'assets/kfc.png'),
                   SizedBox(width: 24),
-                  _MerchantCircle(name: 'Pizzahut'),
+                  _MerchantCircle(
+                      name: 'Pizzahut', imagePath: 'assets/pizzahut.jpg'),
                   SizedBox(width: 24),
-                  _MerchantCircle(name: 'Tealive'),
+                  _MerchantCircle(
+                      name: 'Shopee', imagePath: 'assets/shopee.jpg'),
                   SizedBox(width: 24),
-                  _MerchantCircle(name: 'FamilyMart'),
+                  _MerchantCircle(
+                      name: 'FamilyMart', imagePath: 'assets/fammart.png'),
                 ],
               ),
             ),
@@ -214,20 +218,32 @@ class RewardsCentrePage extends StatelessWidget {
 
                 final promos = [
                   {
-                    'image':
-                        'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+                    'image': 'assets/lotus.jpg',
                     'color': Color(0xFFBADCBC),
                     'subtitleColor': Color(0xFF3F8167),
                   },
                   {
-                    'image':
-                        'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+                    'image': 'assets/transport.jpg',
                     'color': Color(0xFFBADCBC),
                     'subtitleColor': Color(0xFF3F8167),
                   },
                   {
-                    'image':
-                        'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
+                    'image': 'assets/bottle.jpg',
+                    'color': Color(0xFFBADCBC),
+                    'subtitleColor': Color(0xFF3F8167),
+                  },
+                  {
+                    'image': 'assets/pizzahut.jpg',
+                    'color': Color(0xFFBADCBC),
+                    'subtitleColor': Color(0xFF3F8167),
+                  },
+                  {
+                    'image': 'assets/bike.jpeg',
+                    'color': Color(0xFFBADCBC),
+                    'subtitleColor': Color(0xFF3F8167),
+                  },
+                  {
+                    'image': 'assets/coffee.jpg',
                     'color': Color(0xFFBADCBC),
                     'subtitleColor': Color(0xFF3F8167),
                   },
@@ -301,7 +317,8 @@ class RewardsCentrePage extends StatelessWidget {
 
 class _MerchantCircle extends StatelessWidget {
   final String name;
-  const _MerchantCircle({required this.name});
+  final String imagePath;
+  const _MerchantCircle({required this.name, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -310,7 +327,7 @@ class _MerchantCircle extends StatelessWidget {
         CircleAvatar(
           radius: 32,
           backgroundColor: Colors.grey[300],
-          child: Icon(Icons.store, color: Colors.white, size: 36),
+          backgroundImage: AssetImage(imagePath),
         ),
         const SizedBox(height: 8),
         Text(name, style: const TextStyle(fontSize: 12)),
@@ -400,26 +417,32 @@ class PromoListPage extends StatelessWidget {
           final docs = snapshot.data!.docs;
           final promos = [
             {
-              'image':
-                  'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+              'image': 'assets/lotus.jpg',
               'color': Color(0xFFBADCBC),
               'subtitleColor': Color(0xFF3F8167),
             },
             {
-              'image':
-                  'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+              'image': 'assets/rapid.png',
               'color': Color(0xFFBADCBC),
               'subtitleColor': Color(0xFF3F8167),
             },
             {
-              'image':
-                  'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
+              'image': 'assets/bottle.jpg',
               'color': Color(0xFFBADCBC),
               'subtitleColor': Color(0xFF3F8167),
             },
             {
-              'image':
-                  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
+              'image': 'assets/pizza.jpg',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image': 'assets/bike.jpg',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image': 'assets/starbucks.jpg',
               'color': Color(0xFFBADCBC),
               'subtitleColor': Color(0xFF3F8167),
             },
@@ -506,7 +529,7 @@ class PromoCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
+            child: Image.asset(
               image,
               height: 143,
               width: double.infinity,
