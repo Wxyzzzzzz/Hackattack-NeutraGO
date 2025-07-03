@@ -40,7 +40,7 @@ class CarbonCalculator extends StatelessWidget {
               TransportationModeCard(
                 icon: Icons.directions_walk,
                 title: 'Walking',
-                emissions: '50 g/km',
+                emissions: '0 g/km',
                 backgroundColor: const Color(0xFFBAD1C1),
               ),
               const SizedBox(height: 23),

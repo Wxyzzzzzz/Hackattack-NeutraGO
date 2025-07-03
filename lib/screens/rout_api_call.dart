@@ -35,8 +35,10 @@ class _RunningModelState extends State<RunningModel> {
   }
 
   Future<void> fetchRecommendation() async {
-    final url = Uri.parse("http://192.168.100.6:8000/recommend"); // replace with actual backend URL
+    // final url = Uri.parse("http://192.168.100.6:8000/recommend"); // replace with actual backend URL
 
+    // print("URL:  ${url}");
+    final url = Uri.parse("https://route-suggest.onrender.com/recommend");
     final body = {
       "user_id": "jAENInMkzS0KvYyVSyJA",
       "origin": "${widget.currentLocation.latitude}, ${widget.currentLocation.longitude}",
