@@ -5,6 +5,7 @@ import '../widgets/footprint_chart.dart';
 import '../widgets/transportation_chart.dart';
 import '../widgets/action_buttons.dart';
 import 'past_trips_screen.dart';
+import 'reward_centre.dart';
 import 'package:flutter_activity_recognition/flutter_activity_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -517,38 +518,51 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _selectedIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _selectedIndex = index;
-      //     });
-      //   },
-      //   type: BottomNavigationBarType.fixed,
-      //   backgroundColor: Colors.white,
-      //   selectedItemColor: const Color(0xFF7A9B5A),
-      //   unselectedItemColor: const Color(0xFF707070),
-      //   showSelectedLabels: true,
-      //   showUnselectedLabels: false,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.eco),
-      //       label: 'Trip',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.card_giftcard),
-      //       label: 'Rewards',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.person),
-      //       label: 'Profile',
-      //     ),
-      //   ],
-      // ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: const Color(0xFF22866E),
+        unselectedItemColor: const Color(0xFF9A9A9A),
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        currentIndex: 0, // Home is selected
+        onTap: (index) {
+          if (index == 0) {
+            // Already on HomeScreen
+          } else if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PastTripsScreen()),
+            );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const RewardsCentrePage()),
+            );
+          } else if (index == 3) {
+            // Placeholder for Profile
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.eco),
+            label: 'Planner',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.card_giftcard_outlined),
+            label: 'Rewards',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
 }

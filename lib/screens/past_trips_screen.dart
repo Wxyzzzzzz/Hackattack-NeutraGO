@@ -7,9 +7,18 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'trip_details_firestore_page.dart';
 import 'package:geocoding/geocoding.dart';
+import 'home_screen.dart';
+import 'reward_centre.dart';
 
-class PastTripsScreen extends StatelessWidget {
+class PastTripsScreen extends StatefulWidget {
   const PastTripsScreen({super.key});
+
+  @override
+  State<PastTripsScreen> createState() => _PastTripsScreenState();
+}
+
+class _PastTripsScreenState extends State<PastTripsScreen> {
+  DateTime _selectedMonth = DateTime(DateTime.now().year, DateTime.now().month);
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +32,20 @@ class PastTripsScreen extends StatelessWidget {
               height: 91,
               color: const Color(0xFFF3F2E3),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // const Spacer(),
+                  IconButton(
+                    icon:
+                        const Icon(Icons.arrow_back, color: Color(0xFF153462)),
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeScreen()),
+                        (route) => false,
+                      );
+                    },
+                  ),
+                  const Spacer(),
                   const Text(
                     'Past Trips',
                     style: TextStyle(
@@ -35,24 +55,20 @@ class PastTripsScreen extends StatelessWidget {
                       fontFamily: 'Open Sans',
                     ),
                   ),
-                  // const Spacer(),
-                  // Positioned(
-                  //   right: 19,
-                  //   child: IconButton(
-                  //     onPressed: () {},
-                  //     icon: const Icon(
-                  //       Icons.calendar_today,
-                  //       color: Color(0xFF153462),
-                  //       size: 27,
-                  //     ),
-                  //   ),
-                  // ),
+                  const Spacer(),
                 ],
               ),
             ),
 
             // Date Selector
-            const DateSelector(),
+            DateSelector(
+              selectedMonth: _selectedMonth,
+              onMonthChanged: (newMonth) {
+                setState(() {
+                  _selectedMonth = newMonth;
+                });
+              },
+            ),
 
             // Trip List
             Expanded(
@@ -71,12 +87,20 @@ class PastTripsScreen extends StatelessWidget {
                       return const Center(child: Text('No trips found.'));
                     }
                     final trips = snapshot.data!;
+                    final filteredTrips = trips.where((trip) {
+                      return trip.startTime.year == _selectedMonth.year &&
+                          trip.startTime.month == _selectedMonth.month;
+                    }).toList();
+                    if (filteredTrips.isEmpty) {
+                      return const Center(
+                          child: Text('No trips found for this month.'));
+                    }
                     return ListView.separated(
-                      itemCount: trips.length,
+                      itemCount: filteredTrips.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 22),
                       itemBuilder: (context, index) {
-                        final trip = trips[index];
+                        final trip = filteredTrips[index];
                         // Print the generated map image URL for debugging
                         print(_generateMapImageUrl(trip));
                         return FutureBuilder<List<String>>(
@@ -126,6 +150,21 @@ class PastTripsScreen extends StatelessWidget {
         selectedFontSize: 12,
         unselectedFontSize: 12,
         currentIndex: 1, // Planner is selected
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (route) => false,
+            );
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const RewardsCentrePage()),
+            );
+          }
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
