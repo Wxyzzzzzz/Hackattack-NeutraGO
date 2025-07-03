@@ -80,7 +80,6 @@ class Trip {
         'starttimestamp': Timestamp.fromDate(startTime),
         'endtimestamp': endTime != null ? Timestamp.fromDate(endTime!) : null,
         'point_rewarded': pointRewarded ?? 0,
-        'mode': activity.toString().split('.').last,
         'user_id': userId,
         'stops': stops?.map((s) => s.toMap()).toList() ?? [],
       }..removeWhere((key, value) => value == null);
