@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/auth_service.dart';
+import 'reward_detail.dart';
 
 class RewardsCentrePage extends StatelessWidget {
   const RewardsCentrePage({Key? key}) : super(key: key);
+
+  Future<int> _fetchUserPoints() async {
+    final userId = 'jAENInMkzS0KvYyVSyJA';
+    final doc =
+        await FirebaseFirestore.instance.collection('user').doc(userId).get();
+    if (doc.exists &&
+        doc.data() != null &&
+        doc.data()!.containsKey('total_points')) {
+      return doc['total_points'] ?? 0;
+    }
+    return 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +92,35 @@ class RewardsCentrePage extends StatelessWidget {
                       fontSize: 20,
                     ),
                   ),
-                  Text(
-                    '1,250',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                    ),
+                  FutureBuilder<int>(
+                    future: _fetchUserPoints(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                          width: 40,
+                          height: 28,
+                          child: Center(
+                            child: SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      final points = snapshot.data ?? 0;
+                      return Text(
+                        points.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -149,47 +186,86 @@ class RewardsCentrePage extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             height: 230, // Height to fit the promo card
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: 3,
-              separatorBuilder: (context, index) => SizedBox(width: 16),
-              itemBuilder: (context, index) {
+            child: FutureBuilder<QuerySnapshot>(
+              future: FirebaseFirestore.instance.collection('rewards').get(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                final docs = snapshot.data!.docs;
+                final rewards = List.generate(3, (index) {
+                  if (index < docs.length) {
+                    final data = docs[index].data() as Map<String, dynamic>;
+                    return {
+                      'id': docs[index].id,
+                      'title': data['reward_title'] ?? '',
+                      'points': '${data['required_points'] ?? 0} pts',
+                    };
+                  } else {
+                    return {
+                      'id': '',
+                      'title': '',
+                      'points': '',
+                    };
+                  }
+                });
+
                 final promos = [
                   {
                     'image':
                         'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-                    'title': 'Pizza Hut RM 10 off',
-                    'points': '300 pts',
                     'color': Color(0xFFBADCBC),
                     'subtitleColor': Color(0xFF3F8167),
                   },
                   {
                     'image':
                         'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-                    'title': 'Pizza Hut RM 10 off',
-                    'points': '300 pts',
                     'color': Color(0xFFBADCBC),
                     'subtitleColor': Color(0xFF3F8167),
                   },
                   {
                     'image':
                         'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-                    'title': '7-Eleven RM 2 Cashback',
-                    'points': '100 pts',
                     'color': Color(0xFFBADCBC),
                     'subtitleColor': Color(0xFF3F8167),
                   },
                 ];
-                final promo = promos[index];
-                return SizedBox(
-                  width: 260,
-                  child: PromoCard(
-                    image: promo['image'] as String,
-                    title: promo['title'] as String,
-                    points: promo['points'] as String,
-                    color: promo['color'] as Color,
-                    subtitleColor: promo['subtitleColor'] as Color,
-                  ),
+
+                return ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 3,
+                  separatorBuilder: (context, index) => SizedBox(width: 16),
+                  itemBuilder: (context, index) {
+                    final promo = promos[index];
+                    final reward = rewards[index];
+                    return GestureDetector(
+                      onTap: reward['id'] != ''
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RewardDetailPage(
+                                    rewardId: reward['id'],
+                                    imageUrl: promo['image'] as String?,
+                                    title: reward['title'],
+                                    points: reward['points'],
+                                  ),
+                                ),
+                              );
+                            }
+                          : null,
+                      child: SizedBox(
+                        width: 260,
+                        child: PromoCard(
+                          image: promo['image'] as String,
+                          title: reward['title'] as String,
+                          points: reward['points'] as String,
+                          color: promo['color'] as Color,
+                          subtitleColor: promo['subtitleColor'] as Color,
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -313,45 +389,81 @@ class PromoListPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        children: [
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-            title: 'Get a Free Coffee from Starbucks',
-            points: '280 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-          SizedBox(height: 24),
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-            title: 'Pizza Hut RM 10 off',
-            points: '300 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-          SizedBox(height: 24),
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-            title: '7-Eleven RM 2 Cashback',
-            points: '100 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-          SizedBox(height: 24),
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
-            title: 'TNG RM 1 Cashback',
-            points: '50 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-        ],
+      body: FutureBuilder<QuerySnapshot>(
+        future: FirebaseFirestore.instance.collection('rewards').get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final docs = snapshot.data!.docs;
+          final promos = [
+            {
+              'image':
+                  'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image':
+                  'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image':
+                  'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image':
+                  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+          ];
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            itemCount: promos.length,
+            separatorBuilder: (context, index) => SizedBox(height: 24),
+            itemBuilder: (context, index) {
+              final promo = promos[index];
+              String title = '';
+              String points = '';
+              String rewardId = '';
+              if (index < docs.length) {
+                final data = docs[index].data() as Map<String, dynamic>;
+                title = data['reward_title'] ?? '';
+                points = '${data['required_points'] ?? 0} pts';
+                rewardId = docs[index].id;
+              }
+              return GestureDetector(
+                onTap: rewardId != ''
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RewardDetailPage(
+                              rewardId: rewardId,
+                              imageUrl: promo['image'] as String?,
+                              title: title,
+                              points: points,
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
+                child: PromoCard(
+                  image: promo['image'] as String,
+                  title: title,
+                  points: points,
+                  color: promo['color'] as Color,
+                  subtitleColor: promo['subtitleColor'] as Color,
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
