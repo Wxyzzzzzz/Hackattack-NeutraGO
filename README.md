@@ -26,7 +26,7 @@ NeutraGO automatically detects your transportation modes (walking, car, bus, etc
 
 1. **Clone the repository**
    ```bash
-   git clone [https://github.com/your-username/NeutraGO.git](https://github.com/Wxyzzzzzz/Hackattack-NeutraGO.git)
+   git clone https://github.com/Wxyzzzzzz/Hackattack-NeutraGO.git
    cd HackAttack-NeutraGO
    ```
 
