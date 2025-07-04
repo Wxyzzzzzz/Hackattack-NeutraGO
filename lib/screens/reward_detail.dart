@@ -98,147 +98,163 @@ class RewardDetailPage extends StatelessWidget {
             return Center(child: Text('Reward not found.'));
           }
           final int requiredPoints = data['required_points'] ?? 0;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Container(
-                width: double.infinity,
-                height: 91,
-                color: const Color(0xFFF3F2E4),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 16,
-                      top: 48,
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back, color: Color(0xFF153462)),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                    Positioned(
-                      top: 51,
-                      left: 0,
-                      right: 0,
-                      child: Center(
-                        child: Text(
-                          'Details',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF153462),
-                          ),
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Container(
+                  width: double.infinity,
+                  height: 91,
+                  color: const Color(0xFFF3F2E4),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 16,
+                        top: 48,
+                        child: IconButton(
+                          icon:
+                              Icon(Icons.arrow_back, color: Color(0xFF153462)),
+                          onPressed: () => Navigator.of(context).pop(),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              // Banner image
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: imageUrl != null
-                      ? Image.network(
-                          imageUrl!,
-                          height: 140,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          height: 140,
-                          width: double.infinity,
-                          color: Colors.grey[300],
-                        ),
-                ),
-              ),
-              // Details box (Frame 2609976)
-              Center(
-                child: Container(
-                  width: 393,
-                  height: 317,
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.07),
-                        blurRadius: 12,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title ?? (data['reward_title'] ?? ''),
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF153462),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          points ?? ('${data['required_points'] ?? 0} pts'),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF7A9B5A),
-                          ),
-                        ),
-                        SizedBox(height: 24),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Text(
-                              data['reward_description'] ?? '',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF46546A),
-                              ),
+                      Positioned(
+                        top: 51,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Text(
+                            'Details',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF153462),
                             ),
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Banner image
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: imageUrl != null
+                        ? Image.asset(
+                            imageUrl!,
+                            height: 140,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            height: 140,
+                            width: double.infinity,
+                            color: Colors.grey[300],
+                          ),
+                  ),
+                ),
+                // Details box (Frame 2609976)
+                Center(
+                  child: Container(
+                    width: 393,
+                    height: 317,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.07),
+                          blurRadius: 12,
+                          offset: Offset(0, 4),
+                        ),
                       ],
                     ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title ?? (data['reward_title'] ?? ''),
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF153462),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            points ?? ('${data['required_points'] ?? 0} pts'),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF7A9B5A),
+                            ),
+                          ),
+                          SizedBox(height: 24),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Text(
+                                data['reward_description'] ?? '',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xFF46546A),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      bottomNavigationBar: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('rewards')
+            .doc(rewardId)
+            .get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return SizedBox.shrink();
+          }
+          final data = snapshot.data!.data() as Map<String, dynamic>?;
+          if (data == null) {
+            return SizedBox.shrink();
+          }
+          final int requiredPoints = data['required_points'] ?? 0;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF153462),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                ),
+                onPressed: () => _redeemReward(context, requiredPoints),
+                child: Text(
+                  'Redeem now',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              Spacer(),
-              // Redeem button
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF153462),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(60),
-                      ),
-                    ),
-                    onPressed: () => _redeemReward(context, requiredPoints),
-                    child: Text(
-                      'Redeem now',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           );
         },
       ),
