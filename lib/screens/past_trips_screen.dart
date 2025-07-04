@@ -229,30 +229,42 @@ class _PastTripsScreenState extends State<PastTripsScreen> {
   Future<List<String>> _getLocationNames(Trip trip) async {
     String start = 'Unknown';
     String end = 'Unknown';
-    if (trip.startLat != null && trip.startLng != null) {
+
+    // Use stored names if available
+    if (trip.originName != null && trip.originName!.isNotEmpty) {
+      start = trip.originName!;
+    } else if (trip.startLat != null && trip.startLng != null) {
       try {
         final placemarks =
             await placemarkFromCoordinates(trip.startLat!, trip.startLng!);
         if (placemarks.isNotEmpty) {
           final p = placemarks.first;
-          start = [p.name, p.locality, p.administrativeArea, p.country]
+          // Create a shorter, more manageable location name
+          final parts = [p.name, p.locality, p.administrativeArea]
               .where((e) => e != null && e.isNotEmpty)
-              .join(', ');
+              .toList();
+          start = parts.isNotEmpty ? parts.join(', ') : 'Unknown';
         }
       } catch (_) {}
     }
-    if (trip.endLat != null && trip.endLng != null) {
+
+    if (trip.destinationName != null && trip.destinationName!.isNotEmpty) {
+      end = trip.destinationName!;
+    } else if (trip.endLat != null && trip.endLng != null) {
       try {
         final placemarks =
             await placemarkFromCoordinates(trip.endLat!, trip.endLng!);
         if (placemarks.isNotEmpty) {
           final p = placemarks.first;
-          end = [p.name, p.locality, p.administrativeArea, p.country]
+          // Create a shorter, more manageable location name
+          final parts = [p.name, p.locality, p.administrativeArea]
               .where((e) => e != null && e.isNotEmpty)
-              .join(', ');
+              .toList();
+          end = parts.isNotEmpty ? parts.join(', ') : 'Unknown';
         }
       } catch (_) {}
     }
+
     return [start, end];
   }
 

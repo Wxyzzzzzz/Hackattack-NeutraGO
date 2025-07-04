@@ -21,7 +21,7 @@ class TripCard extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width * 0.95,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      height: 222,
+      constraints: const BoxConstraints(minHeight: 222),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
@@ -76,7 +76,7 @@ class TripCard extends StatelessWidget {
           // Trip Details Section
           Container(
             width: 348,
-            height: 80,
+            constraints: const BoxConstraints(minHeight: 80),
             decoration: const BoxDecoration(
               color: Color(0xFFF3F2E3),
               borderRadius: BorderRadius.only(
@@ -85,9 +85,10 @@ class TripCard extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Date and Time
                   Text(
@@ -99,72 +100,77 @@ class TripCard extends StatelessWidget {
                       fontFamily: 'Open Sans',
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
 
                   // Start and End Locations
-                  Expanded(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Start Location
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            startLocation,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'Open Sans',
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Start Location
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          startLocation,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'Open Sans',
+                            height: 1.2,
                           ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                      ),
 
-                        // Dotted Line
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Row(
-                              children: List.generate(
-                                20,
-                                (index) => Expanded(
-                                  child: Container(
-                                    height: 1,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 1),
-                                    decoration: BoxDecoration(
-                                      color: index % 2 == 0
-                                          ? Colors.black
-                                          : Colors.transparent,
+                      // Dotted Line
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: List.generate(
+                                  20,
+                                  (index) => Expanded(
+                                    child: Container(
+                                      height: 1,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 1),
+                                      decoration: BoxDecoration(
+                                        color: index % 2 == 0
+                                            ? Colors.black
+                                            : Colors.transparent,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
+                      ),
 
-                        // End Location
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            endLocation,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'Open Sans',
-                            ),
-                            textAlign: TextAlign.right,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                      // End Location
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          endLocation,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'Open Sans',
+                            height: 1.2,
                           ),
+                          textAlign: TextAlign.right,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -8,7 +8,6 @@ import '../main_navigation_page.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -43,12 +42,14 @@ class _LoginScreenState extends State<LoginScreen> {
             context: context,
             barrierDismissible: false,
             builder: (context) => LoginSuccessDialog(
+              isLogin: true,
               onDone: () {
                 // Navigator.of(context).pop();
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const MainNavigationPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const MainNavigationPage()),
                 );
-              }
+              },
             ),
           );
         }
@@ -93,12 +94,14 @@ class _LoginScreenState extends State<LoginScreen> {
             context: context,
             barrierDismissible: false,
             builder: (context) => LoginSuccessDialog(
+              isLogin: true,
               onDone: () {
                 // Navigator.of(context).pop();
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const MainNavigationPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const MainNavigationPage()),
                 );
-              }
+              },
             ),
           );
         }
@@ -148,8 +151,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         loadingProgress == null
                             ? child
                             : const Center(child: CircularProgressIndicator()),
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.eco, size: 120, color: Color(0xFF7A9B5A)),
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.eco,
+                        size: 120,
+                        color: Color(0xFF7A9B5A)),
                   ),
                   // SizedBox(
                   //   width: 300,
@@ -157,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // child: Image.asset(
                   //     'assets/login/g-logo.png',
                   //     fit: BoxFit.contain,
-                  
+
                   // ),
                 ),
                 const SizedBox(height: 60),
@@ -174,7 +179,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: !_isPasswordVisible,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                          _isPasswordVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                           color: Colors.black,
                           size: 19,
                         ),
@@ -233,7 +240,8 @@ class _LoginScreenState extends State<LoginScreen> {
             fontWeight: FontWeight.w400,
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
           suffixIcon: suffixIcon,
         ),
       ),
@@ -249,7 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF153462),
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
           elevation: 0,
         ),
         child: _isLoading
@@ -263,7 +272,8 @@ class _LoginScreenState extends State<LoginScreen> {
               )
             : const Text(
                 'Login',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.5),
+                style: TextStyle(
+                    fontSize: 14, fontWeight: FontWeight.w500, height: 1.5),
               ),
       ),
     );
@@ -333,7 +343,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class LoginSuccessDialog extends StatelessWidget {
   final VoidCallback onDone;
-  const LoginSuccessDialog({required this.onDone, super.key});
+  final bool isLogin;
+  const LoginSuccessDialog(
+      {required this.onDone, this.isLogin = true, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -353,24 +365,27 @@ class LoginSuccessDialog extends StatelessWidget {
                 color: Color(0xFFF3F2E4),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.check, size: 56, color: Color(0xFF153462)),
+              child:
+                  const Icon(Icons.check, size: 56, color: Color(0xFF153462)),
             ),
             const SizedBox(height: 32),
-            const Text(
-              "Sign Up Success!",
-              style: TextStyle(
+            Text(
+              isLogin ? "Login Success!" : "Sign Up Success!",
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF102B23),
               ),
             ),
             const SizedBox(height: 16),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Text(
-                "Thanks for joining us! You can login to your account now.",
+                isLogin
+                    ? "Welcome back! You have successfully logged in."
+                    : "Thanks for joining us! You can login to your account now.",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Color(0xFFA0A8B0)),
+                style: const TextStyle(fontSize: 16, color: Color(0xFFA0A8B0)),
               ),
             ),
             const SizedBox(height: 40),
@@ -385,7 +400,8 @@ class LoginSuccessDialog extends StatelessWidget {
                     borderRadius: BorderRadius.circular(32),
                   ),
                 ),
-                child: const Text("Done", style: TextStyle(fontSize: 18, color: Colors.white)),
+                child: const Text("Done",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ),
           ],
