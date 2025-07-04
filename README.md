@@ -1,16 +1,54 @@
-# Hackattack - NeutraGo
+# NeutraGO - Carbon Footprint Tracking App
 
-A new Flutter project.
+A Flutter mobile application that helps users track their carbon footprint by monitoring transportation habits and encouraging eco-friendly choices.
 
-## Getting Started
+## 🌱 Overview
 
-This project is a starting point for a Flutter application.
+NeutraGO automatically detects your transportation modes (walking, car, bus, etc.) and calculates your daily CO₂ emissions. The app provides smart trip planning, rewards for green choices, and leaderboards to compete with other users.
 
-A few resources to get you started if this is your first Flutter project:
+## ✨ Key Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Automatic Trip Detection**: Tracks your movement and identifies transportation modes
+- **Carbon Footprint Calculator**: Real-time CO₂ emission calculations
+- **Smart Trip Planning**: Google Maps integration with eco-friendly route suggestions
+- **Rewards System**: Earn points for sustainable transportation choices
+- **Leaderboards**: Compete with other users on carbon savings
+- **Trip History**: View past trips and emission data
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 How to Run
+
+### Prerequisites
+- Flutter SDK (3.1.5+)
+- Android Studio or VS Code
+- Android device/emulator
+
+### Setup Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/NeutraGO.git
+   cd NeutraGO
+   ```
+
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure Firebase** (Required)
+   - Create a Firebase project
+   - Add `google-services.json` to `android/app/`
+   - Enable Authentication and Firestore
+
+4. **Configure Google Maps** (Required)
+   - Get Google Maps API key
+   - Add to your configuration
+
+5. **Run the app**
+   ```bash
+   flutter run
+   ```
+
+---
+
+Built with Flutter, Firebase, and Google Maps Platform.
