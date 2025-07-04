@@ -52,7 +52,7 @@ NeutraGO automatically detects your transportation modes (walking, car, bus, etc
 ### Route Suggestion Model
    The source code for route suggestion model can be obtained from the Github link below:
    
-   https://github.com/Wxyzzzzzz/Hackattack-NeutraGO.git
+   [Route Suggestion Model](https://github.com/ceeee33/route_suggest.git)
    
 ---
 
