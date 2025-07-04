@@ -68,47 +68,48 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       ),
     ]);
 
-  // Draw polyline from recommended route
-  if (widget.recommendations.isNotEmpty) {
-    final recommendation = widget.recommendations[currentRouteIndex]; // top-ranked route
-    final List<dynamic> coords = recommendation['polyline_points'];
+    // Draw polyline from recommended route
+    if (widget.recommendations.isNotEmpty) {
+      final recommendation =
+          widget.recommendations[currentRouteIndex]; // top-ranked route
+      final List<dynamic> coords = recommendation['polyline_points'];
 
-    final List<LatLng> polylinePoints = coords.map<LatLng>((coord) {
-      return LatLng(coord[0], coord[1]); // Convert each [lat, lng] to LatLng
-    }).toList();
+      final List<LatLng> polylinePoints = coords.map<LatLng>((coord) {
+        return LatLng(coord[0], coord[1]); // Convert each [lat, lng] to LatLng
+      }).toList();
 
-    _polylines.add(
-      Polyline(
-        polylineId: PolylineId('route_$currentRouteIndex'),
-        points: polylinePoints,
-        color: Colors.blueAccent,
-        width: 3,
-      ),
-    );
-  } 
-  //   final steps = recommendation['steps'] as List<dynamic>;
+      _polylines.add(
+        Polyline(
+          polylineId: PolylineId('route_$currentRouteIndex'),
+          points: polylinePoints,
+          color: Colors.blueAccent,
+          width: 3,
+        ),
+      );
+    }
+    //   final steps = recommendation['steps'] as List<dynamic>;
 
-  //   for (int i = 0; i < steps.length; i++) {
-  //     final step = steps[i];
-  //     final mode = step['mode'].toString().toLowerCase(); // e.g., "walking", "transit", "driving"
+    //   for (int i = 0; i < steps.length; i++) {
+    //     final step = steps[i];
+    //     final mode = step['mode'].toString().toLowerCase(); // e.g., "walking", "transit", "driving"
 
-  //     final coords = step['polyline_points']; // e.g., [[lat, lng], [lat, lng], ...]
-  //     if (coords == null || coords.length < 2) continue;
+    //     final coords = step['polyline_points']; // e.g., [[lat, lng], [lat, lng], ...]
+    //     if (coords == null || coords.length < 2) continue;
 
-  //     final List<LatLng> polylinePoints = coords.map<LatLng>((coord) {
-  //       return LatLng(coord[0], coord[1]);
-  //     }).toList();
+    //     final List<LatLng> polylinePoints = coords.map<LatLng>((coord) {
+    //       return LatLng(coord[0], coord[1]);
+    //     }).toList();
 
-  //     _polylines.add(
-  //       Polyline(
-  //         polylineId: PolylineId('route_${currentRouteIndex}_step_$i'),
-  //         points: polylinePoints,
-  //         color: _getColorForMode(mode),
-  //         width: 4,
-  //       ),
-  //     );
-  //   }
-  // }
+    //     _polylines.add(
+    //       Polyline(
+    //         polylineId: PolylineId('route_${currentRouteIndex}_step_$i'),
+    //         points: polylinePoints,
+    //         color: _getColorForMode(mode),
+    //         width: 4,
+    //       ),
+    //     );
+    //   }
+    // }
   }
 
   LatLngBounds _createBoundsFromPoints(List<dynamic> points) {
@@ -132,16 +133,17 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     );
   }
 
-    void _onMapCreated(GoogleMapController controller) {
-      mapController = controller;
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
 
-      // Zoom into current route
-      final polylinePoints = widget.recommendations[currentRouteIndex]['polyline_points'];
-      if (polylinePoints.isNotEmpty) {
-        final bounds = _createBoundsFromPoints(polylinePoints);
-        controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
-      }
+    // Zoom into current route
+    final polylinePoints =
+        widget.recommendations[currentRouteIndex]['polyline_points'];
+    if (polylinePoints.isNotEmpty) {
+      final bounds = _createBoundsFromPoints(polylinePoints);
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
     }
+  }
 
   //   // Collect all coordinates across all steps of the selected route
   //   final route = widget.recommendations[currentRouteIndex];
@@ -180,7 +182,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bestRoute = widget.recommendations.isNotEmpty ? widget.recommendations[0] : null;
+    final bestRoute =
+        widget.recommendations.isNotEmpty ? widget.recommendations[0] : null;
     final otherRoutes = widget.recommendations.length > 1
         ? widget.recommendations.sublist(1)
         : [];
@@ -203,11 +206,13 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MainNavigationPage(initialIndex: 1)),
+                              builder: (context) =>
+                                  MainNavigationPage(initialIndex: 1)),
                           (route) => false,
                         );
                       },
-                      icon: const Icon(Icons.arrow_back, color: Color(0xFF153462), size: 28),
+                      icon: const Icon(Icons.arrow_back,
+                          color: Color(0xFF153462), size: 28),
                     ),
                     const Expanded(
                       child: Text(
@@ -316,12 +321,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                     child: Center(
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          final selectedRoute = widget.recommendations[currentRouteIndex];
+                          final selectedRoute =
+                              widget.recommendations[currentRouteIndex];
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => RoutingScreen(
-                                polylineCoordinates: selectedRoute['polyline_points'],
+                                polylineCoordinates:
+                                    selectedRoute['polyline_points'],
                                 destination: widget.endLocation,
                               ),
                             ),
@@ -332,8 +339,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[700],
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 14),
+                          textStyle: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -350,7 +359,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     );
   }
 
-
   Widget _buildRouteCard(dynamic route, {bool isSelected = false}) {
     final steps = route['steps'] as List<dynamic>;
     final totalTime = route['total_time'];
@@ -360,13 +368,15 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     String? lastMode;
     bool isFirst = true;
 
+
     for (var s in steps) {
       final mode = s.split('via').last.trim();
       if (mode != lastMode) {
         if (!isFirst) {
           transportWidgets.add(const Padding(
             padding: EdgeInsets.symmetric(horizontal: 4),
-            child: Text('>', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: Text('>',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ));
         }
 
@@ -389,9 +399,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       ),
       child: Row(
         children: [
-          Row(
-            children: transportWidgets
-          ),
+          Row(children: transportWidgets),
           const Spacer(),
           Column(
             children: [
@@ -399,7 +407,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700)),
               Text('Saves ${totalEmission.toStringAsFixed(0)}g CO₂',
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                  style: const TextStyle(
+                      fontSize: 10, fontWeight: FontWeight.w600)),
             ],
           )
         ],
@@ -415,20 +424,26 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     final List<Widget> transportWidgets = [];
     String? lastMode;
     bool isFirst = true;
+    int iconCount = 0;
+    const int maxIcons = 4;
 
     for (var s in steps) {
       final mode = s.split('via').last.trim();
       if (mode != lastMode) {
+        if (iconCount >= maxIcons) break;
+
         if (!isFirst) {
           transportWidgets.add(const Padding(
             padding: EdgeInsets.symmetric(horizontal: 4),
-            child: Text('>', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: Text('>',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ));
         }
 
         transportWidgets.add(Icon(getTransportIcon(mode), size: 24));
         lastMode = mode;
         isFirst = false;
+        iconCount++;
       }
     }
 
@@ -446,9 +461,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       ),
       child: Row(
         children: [
-          Row(
-            children: transportWidgets
-          ),
+          Row(children: transportWidgets),
           const Spacer(),
           Column(
             children: [
@@ -456,7 +469,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700)),
               Text('${totalEmission.toStringAsFixed(0)}g CO₂',
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                  style: const TextStyle(
+                      fontSize: 10, fontWeight: FontWeight.w600)),
             ],
           )
         ],

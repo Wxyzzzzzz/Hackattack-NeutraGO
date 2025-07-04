@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'carbon_calculator.dart';
+// import 'carbon_calculator.dart';
+import 'carbon_breakdown.dart';
 
 import '../widgets/location_search_field.dart';
 
@@ -11,7 +12,8 @@ class CarbonCalculatorScreen extends StatefulWidget {
 }
 
 class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
-  final TextEditingController _startLocationController = TextEditingController();
+  final TextEditingController _startLocationController =
+      TextEditingController();
   final TextEditingController _endLocationController = TextEditingController();
   String? selectedTransportationMethod;
   bool _showCarbonFootprint = false;
@@ -39,7 +41,7 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F2E3),
       body: SafeArea(
@@ -47,7 +49,8 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
           children: [
             // Header with back button and title
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 children: [
                   GestureDetector(
@@ -76,11 +79,11 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                   ),
                   // const SizedBox(width: 44), // Balance the back button
                   GestureDetector(
-                    onTap: () => 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const CarbonCalculator()),
-                      ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CarbonBreakdownScreen()),
+                    ),
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       child: const Icon(
@@ -93,7 +96,7 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                 ],
               ),
             ),
-            
+
             // Scrollable content
             Expanded(
               child: SingleChildScrollView(
@@ -102,7 +105,7 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 24),
-                    
+
                     // Enter details title
                     Text(
                       'Enter the following details',
@@ -115,7 +118,7 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Form container
                     Container(
                       width: double.infinity,
@@ -150,7 +153,7 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // End Location
                           // _buildTextInputField(
                           //   'End Location',
@@ -166,7 +169,7 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Transportation Method
                           _buildDropdownField(
                             'Transportation Method',
@@ -181,9 +184,9 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Submit Button
                     SizedBox(
                       width: double.infinity,
@@ -212,9 +215,9 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Estimated Carbon Footprint (only show after submit)
                     if (_showCarbonFootprint) ...[
                       Container(
@@ -258,8 +261,9 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                         ),
                       ),
                     ],
-                    
-                    SizedBox(height: MediaQuery.of(context).padding.bottom + 32),
+
+                    SizedBox(
+                        height: MediaQuery.of(context).padding.bottom + 32),
                   ],
                 ),
               ),
@@ -318,7 +322,8 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
                 fontFamily: 'Poppins',
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
             ),
           ),
         ),
@@ -448,7 +453,8 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
     );
   }
 
-  String _calculateCarbonFootprint(String startLocation, String endLocation, String transportMethod) {
+  String _calculateCarbonFootprint(
+      String startLocation, String endLocation, String transportMethod) {
     // Simple calculation logic - in a real app, this would use actual APIs and distance calculations
     Map<String, double> emissionFactors = {
       'Car': 120.0,
@@ -462,7 +468,8 @@ class _CarbonCalculatorScreenState extends State<CarbonCalculatorScreen> {
     };
 
     // Mock distance calculation based on location names length (for demo purposes)
-    double estimatedDistance = (startLocation.length + endLocation.length) * 2.0;
+    double estimatedDistance =
+        (startLocation.length + endLocation.length) * 2.0;
     double emissionFactor = emissionFactors[transportMethod] ?? 100.0;
     double carbonFootprint = (estimatedDistance * emissionFactor) / 100;
 

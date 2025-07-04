@@ -26,15 +26,14 @@
 //   List<dynamic> _placePredictions = [];
 //   bool _showSuggestions = false;
 //   // Example initial position (Penang, Malaysia)
-//   // LatLng _currentMapCenter = const LatLng(5.3600, 100.3020);
-//   LatLng? _currentMapCenter;
+//   LatLng _currentMapCenter = const LatLng(5.3600, 100.3020);
 //   String _selectedDestinationType = '';
 //   LatLng? _selectedDestination;
 
 //   @override
 //   void initState() {
 //     super.initState();
-//     _getCurrentLocation();
+//     // _getCurrentLocation();
 //   }
 
 //   @override
@@ -54,44 +53,44 @@
 //     });
 //   }
 
-//   Future<void> _getCurrentLocation() async {
-//     bool serviceEnabled;
-//     LocationPermission permission;
+//   // Future<void> _getCurrentLocation() async {
+//   //   bool serviceEnabled;
+//   //   LocationPermission permission;
 
-//     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-//     if (!serviceEnabled) {
-//       return;
-//     }
+//   //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+//   //   if (!serviceEnabled) {
+//   //     return;
+//   //   }
 
-//     permission = await Geolocator.checkPermission();
-//     if (permission == LocationPermission.denied) {
-//       permission = await Geolocator.requestPermission();
-//       if (permission == LocationPermission.denied) return;
-//     }
+//   //   permission = await Geolocator.checkPermission();
+//   //   if (permission == LocationPermission.denied) {
+//   //     permission = await Geolocator.requestPermission();
+//   //     if (permission == LocationPermission.denied) return;
+//   //   }
 
-//     if (permission == LocationPermission.deniedForever) return;
+//   //   if (permission == LocationPermission.deniedForever) return;
 
-//     final position = await Geolocator.getCurrentPosition(
-//         desiredAccuracy: LocationAccuracy.high);
-//     final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+//   //   final position = await Geolocator.getCurrentPosition(
+//   //       desiredAccuracy: LocationAccuracy.high);
+//   //   final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
 
-//     setState(() {
-//       _currentMapCenter = currentLatLng;
+//   //   setState(() {
+//   //     _currentMapCenter = currentLatLng;
 
-//       // ✅ Add a marker for current location
-//       _markers.removeWhere((m) => m.markerId == MarkerId('current_location'));
-//       _markers.add(
-//         Marker(
-//           markerId: const MarkerId('current_location'),
-//           position: currentLatLng,
-//           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-//           infoWindow: const InfoWindow(title: 'You are here'),
-//         ),
-//       );
-//     });
+//   //     // ✅ Add a marker for current location
+//   //     _markers.removeWhere((m) => m.markerId == MarkerId('current_location'));
+//   //     _markers.add(
+//   //       Marker(
+//   //         markerId: const MarkerId('current_location'),
+//   //         position: currentLatLng,
+//   //         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+//   //         infoWindow: const InfoWindow(title: 'You are here'),
+//   //       ),
+//   //     );
+//   //   });
 
-//     mapController.animateCamera(CameraUpdate.newLatLngZoom(currentLatLng, 15));
-//   }
+//   //   mapController.animateCamera(CameraUpdate.newLatLngZoom(currentLatLng, 15));
+//   // }
 
 //   Future<void> _onSearchChanged(String value) async {
 //     if (value.isEmpty) {
@@ -159,19 +158,19 @@
 //           children: [
 //             Column(
 //               children: [
-//                 // Container(
-//                 //   height: MediaQuery.of(context).size.height * 0.05,
-//                 //   alignment: Alignment.center,
-//                 //   color: const Color(0xFFF3F2E3),
-//                 //   child: const Text(
-//                 //     'Trip Planning',
-//                 //     style: TextStyle(
-//                 //       color: Color(0xFF153462),
-//                 //       fontSize: 20,
-//                 //       fontWeight: FontWeight.w600,
-//                 //     ),
-//                 //   ),
-//                 // ),
+//                 Container(
+//                   height: 60,
+//                   alignment: Alignment.center,
+//                   color: const Color(0xFFF3F2E3),
+//                   child: const Text(
+//                     'Trip Planning',
+//                     style: TextStyle(
+//                       color: Color(0xFF153462),
+//                       fontSize: 20,
+//                       fontWeight: FontWeight.w600,
+//                     ),
+//                   ),
+//                 ),
                             
 //                 // Blue line under header
 //                 Container(
@@ -182,7 +181,7 @@
 //                 // Map area
 //                 Container(
 //                   width: double.infinity,
-//                   height: MediaQuery.of(context).size.height * 0.5, // Adjust as needed for your layout
+//                   height: 410, // Adjust as needed for your layout
 //                   decoration: BoxDecoration(
 //                     color: Colors.white,
 //                     borderRadius: BorderRadius.circular(0),
@@ -192,7 +191,7 @@
 //                     child: GoogleMap(
 //                       onMapCreated: _onMapCreated,
 //                       initialCameraPosition: CameraPosition(
-//                         target: _currentMapCenter ?? const LatLng(5.36, 100.302),
+//                         target: _currentMapCenter,
 //                         zoom: 13.0,
 //                       ),
 //                       myLocationEnabled: true,
@@ -209,24 +208,17 @@
 //                     color: Colors.white,
 //                     child: Stack(
 //                       children: [
-//                         const SizedBox(height: 8),
 //                         // Main white rounded rectangle with shadow and trip planning UI
-//                         // Positioned(
-//                         //   left: 1,
-//                         //   right: 1,
-//                         //   top: 0,
-//                         Expanded(
+//                         Positioned(
+//                           left: 1,
+//                           right: 1,
+//                           top: 0,
 //                           child: Container(
-//                             width: double.infinity,
-//                             height: MediaQuery.of(context).size.height * 0.4,
-//                             // width: 402,
-//                             // height: 328,
+//                             width: 402,
+//                             height: 328,
 //                             decoration: BoxDecoration(
 //                               color: Colors.white,
-//                               borderRadius: const BorderRadius.only(
-//                                 topLeft: Radius.circular(20),
-//                                 topRight: Radius.circular(20),
-//                               ),
+//                               borderRadius: BorderRadius.circular(20),
 //                               boxShadow: [
 //                                 BoxShadow(
 //                                   color: Colors.black.withOpacity(0.1),
@@ -235,7 +227,7 @@
 //                                 ),
 //                               ],
 //                             ),
-//                             child: SingleChildScrollView(
+//                             child: Padding(
 //                               padding: const EdgeInsets.symmetric(
 //                                   horizontal: 16, vertical: 24),
 //                               child: Column(
@@ -293,24 +285,20 @@
 //                                         onTap: () => _selectDestinationType('Office'),
 //                                       ),
 //                                       _DestinationTypeButton(
-//                                         icon: Icons.school,
-//                                         label: 'School',
+//                                         icon: Icons.star,
+//                                         label: 'Saved',
 //                                         isSelected: _selectedDestinationType == 'Saved',
 //                                         onTap: () => _selectDestinationType('Saved'),
 //                                       ),
 //                                       _DestinationTypeButton(
-//                                         icon: Icons.favorite,
-//                                         label: 'Favourite',
+//                                         icon: Icons.add,
+//                                         label: 'Others',
 //                                         isSelected: _selectedDestinationType == 'Others',
 //                                         onTap: () => _selectDestinationType('Others'),
 //                                       ),
 //                                     ],
 //                                   ),
-//                                   const SizedBox(height: 24)
-//                                   // ),
-//                                 ],
-//                               ),
-//                   ),
+//                                   const SizedBox(height: 24),
 //                                   // Search bar for destination (only show here if not focused)
 //                                   // if (!_searchFocusNode.hasFocus)
 //                                   //   Container(
@@ -348,181 +336,113 @@
 //                                   //       ],
 //                                   //     ),
 //                                   //   ),
-                                  
 //                                   // Search bar for destination (only show here if not focused)
-//                                 // if (!_searchFocusNode.hasFocus)
-//                                 //   Column(
-//                                 //     crossAxisAlignment: CrossAxisAlignment.start,
-//                                 //     children: [
-//                                 //       // 🔍 Search Bar
-//                                 //       Container(
-//                                 //         width: double.infinity,
-//                                 //         height: 56,
-//                                 //         decoration: BoxDecoration(
-//                                 //           color: const Color(0xFFD9D9D9),
-//                                 //           borderRadius: BorderRadius.circular(15),
-//                                 //         ),
-//                                 //         child: Row(
-//                                 //           children: [
-//                                 //             const SizedBox(width: 16),
-//                                 //             const Icon(Icons.place, color: Color(0xFFC81C1C)),
-//                                 //             const SizedBox(width: 12),
-//                                 //             Expanded(
-//                                 //               child: TextField(
-//                                 //                 controller: _searchController,
-//                                 //                 focusNode: _searchFocusNode,
-//                                 //                 decoration: const InputDecoration(
-//                                 //                   hintText: 'Enter a place you want to go',
-//                                 //                   border: InputBorder.none,
-//                                 //                 ),
-//                                 //                 onChanged: _onSearchChanged,
-//                                 //               ),
-//                                 //             ),
-//                                 //             IconButton(
-//                                 //               icon: const Icon(Icons.search, color: Color(0xFF153462)),
-//                                 //               onPressed: () =>
-//                                 //                   _onSearchChanged(_searchController.text),
-//                                 //             ),
-//                                 //             const SizedBox(width: 8),
-//                                 //           ],
-//                                 //         ),
-//                                 //       ),
-
-//                                 Positioned(
-//                                   top: 20,
-//                                   left: 16,
-//                                   right: 16,
-//                                   child: Material(
-//                                     elevation: 8,
-//                                     borderRadius: BorderRadius.circular(15),
-//                                     child: Column(
-//                                       children: [
-//                                         Container(
-//                                           height: 56,
-//                                           decoration: BoxDecoration(
-//                                             color: const Color(0xFFD9D9D9),
-//                                             borderRadius: BorderRadius.circular(15),
-//                                           ),
-//                                           child: Row(
-//                                             children: [
-//                                               const SizedBox(width: 16),
-//                                               const Icon(Icons.place, color: Color(0xFFC81C1C)),
-//                                               const SizedBox(width: 12),
-//                                               Expanded(
-//                                                 child: TextField(
-//                                                   controller: _searchController,
-//                                                   focusNode: _searchFocusNode,
-//                                                   decoration: const InputDecoration(
-//                                                     hintText: 'Enter a place you want to go',
-//                                                     border: InputBorder.none,
-//                                                   ),
-//                                                   onChanged: _onSearchChanged,
-//                                                 ),
-//                                               ),
-//                                               IconButton(
-//                                                 icon: const Icon(Icons.search, color: Color(0xFF153462)),
-//                                                 onPressed: () => _onSearchChanged(_searchController.text),
-//                                               ),
-//                                               const SizedBox(width: 8),
-//                                             ],
-//                                           ),
+//                                 if (!_searchFocusNode.hasFocus)
+//                                   Column(
+//                                     crossAxisAlignment: CrossAxisAlignment.start,
+//                                     children: [
+//                                       // 🔍 Search Bar
+//                                       Container(
+//                                         width: double.infinity,
+//                                         height: 56,
+//                                         decoration: BoxDecoration(
+//                                           color: const Color(0xFFD9D9D9),
+//                                           borderRadius: BorderRadius.circular(15),
 //                                         ),
-//                                         if (_showSuggestions && _placePredictions.isNotEmpty)
-//                                           Container(
-//                                             width: double.infinity,
-//                                             constraints: const BoxConstraints(maxHeight: 250),
-//                                             decoration: BoxDecoration(
-//                                               color: Colors.white,
-//                                               borderRadius: BorderRadius.circular(10),
-//                                               boxShadow: const [
-//                                                 BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
-//                                               ],
+//                                         child: Row(
+//                                           children: [
+//                                             const SizedBox(width: 16),
+//                                             const Icon(Icons.place, color: Color(0xFFC81C1C)),
+//                                             const SizedBox(width: 12),
+//                                             Expanded(
+//                                               child: TextField(
+//                                                 controller: _searchController,
+//                                                 focusNode: _searchFocusNode,
+//                                                 decoration: const InputDecoration(
+//                                                   hintText: 'Enter a place you want to go',
+//                                                   border: InputBorder.none,
+//                                                 ),
+//                                                 onChanged: _onSearchChanged,
+//                                               ),
 //                                             ),
-//                                             child: ListView.builder(
-//                                               shrinkWrap: true,
-//                                               itemCount: _placePredictions.length,
-//                                               itemBuilder: (context, index) {
-//                                                 final prediction = _placePredictions[index];
-//                                                 return ListTile(
-//                                                   title: Text(prediction['description']),
-//                                                   onTap: () => _onSuggestionTap(prediction),
-//                                                 );
-//                                               },
+//                                             IconButton(
+//                                               icon: const Icon(Icons.search, color: Color(0xFF153462)),
+//                                               onPressed: () =>
+//                                                   _onSearchChanged(_searchController.text),
 //                                             ),
-//                                           ),
-//                                       ],
-//                                     ),
-//                                   ),
-                                
+//                                             const SizedBox(width: 8),
+//                                           ],
+//                                         ),
+//                                       ),
 
 //                                       // 🧭 "Go" Button — only show if a destination is selected
-//                                     //   if (_selectedDestination != null)
-//                                     //     Padding(
-//                                     //       padding: const EdgeInsets.only(top: 12),
-//                                     //       child: Center(
-//                                     //         child: SizedBox(
-//                                     //           width: 90,
-//                                     //           height: 48,
-//                                     //           child: ElevatedButton(
-//                                     //             style: ElevatedButton.styleFrom(
-//                                     //               backgroundColor: Color.fromARGB(255, 20, 97, 61),
-//                                     //               shape: RoundedRectangleBorder(
-//                                     //                 borderRadius: BorderRadius.circular(12),
-//                                     //               ),
-//                                     //             ),
-//                                     //             onPressed: () async {
-//                                     //               // Get current position
-//                                     //               final position = await Geolocator.getCurrentPosition(
-//                                     //                   desiredAccuracy: LocationAccuracy.high);
+//                                       if (_selectedDestination != null)
+//                                         Padding(
+//                                           padding: const EdgeInsets.only(top: 12),
+//                                           child: Center(
+//                                             child: SizedBox(
+//                                               width: 90,
+//                                               height: 48,
+//                                               child: ElevatedButton(
+//                                                 style: ElevatedButton.styleFrom(
+//                                                   backgroundColor: Color.fromARGB(255, 20, 97, 61),
+//                                                   shape: RoundedRectangleBorder(
+//                                                     borderRadius: BorderRadius.circular(12),
+//                                                   ),
+//                                                 ),
+//                                                 onPressed: () async {
+//                                                   // Get current position
+//                                                   // final position = await Geolocator.getCurrentPosition(
+//                                                   //     desiredAccuracy: LocationAccuracy.high);
 
-//                                     //               // const LatLng currentLatLng = const LatLng(5.3573, 100.3034);
-//                                     //               final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
-//                                     //               final DateTime timestamp = DateTime.now();
-//                                     //               final String userId = 'user_001'; // Replace with actual user ID if needed
+//                                                   const LatLng currentLatLng = const LatLng(5.3573, 100.3034);
+//                                                   // final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+//                                                   final DateTime timestamp = DateTime.now();
+//                                                   final String userId = 'user_001'; // Replace with actual user ID if needed
 
-//                                     //               if (!mounted) return; 
+//                                                   if (!mounted) return; 
 
-//                                     //               // Animate camera to destination
-//                                     //               mapController.animateCamera(
-//                                     //                 CameraUpdate.newLatLngZoom(_selectedDestination!, 16),
-//                                     //               );
+//                                                   // Animate camera to destination
+//                                                   mapController.animateCamera(
+//                                                     CameraUpdate.newLatLngZoom(_selectedDestination!, 16),
+//                                                   );
 
-//                                     //               // Navigate to summary page
-//                                     //               Navigator.push(
-//                                     //                 context,
-//                                     //                 MaterialPageRoute(
-//                                     //                   builder: (context) => RunningModel(
-//                                     //                     userId: userId,
-//                                     //                     timestamp: timestamp,
-//                                     //                     currentLocation: currentLatLng,
-//                                     //                     destination: _selectedDestination!,
-//                                     //                   ),
-//                                     //                 ),
-//                                     //               );
-//                                     //             },
-//                                     //             child: const Row(
-//                                     //               mainAxisAlignment: MainAxisAlignment.center,
-//                                     //               children: [
-//                                     //                 Icon(Icons.directions, color: Colors.white, size: 18),
-//                                     //                 SizedBox(width: 6),
-//                                     //                 Text(
-//                                     //                   'Go',
-//                                     //                   style: TextStyle(
-//                                     //                     color: Colors.white,
-//                                     //                     fontWeight: FontWeight.w700,
-//                                     //                   ),
-//                                     //                 ),
-//                                     //               ],
-//                                     //             ),
-//                                     //           ),
-//                                     //         ),
-//                                     //       ),
-//                                     //     ),
-//                                     // ],
-//                               //     ),
-//                               //   ],
-//                               // ),
-//                               // ),
+//                                                   // Navigate to summary page
+//                                                   Navigator.push(
+//                                                     context,
+//                                                     MaterialPageRoute(
+//                                                       builder: (context) => RunningModel(
+//                                                         userId: userId,
+//                                                         timestamp: timestamp,
+//                                                         currentLocation: currentLatLng,
+//                                                         destination: _selectedDestination!,
+//                                                       ),
+//                                                     ),
+//                                                   );
+//                                                 },
+//                                                 child: const Row(
+//                                                   mainAxisAlignment: MainAxisAlignment.center,
+//                                                   children: [
+//                                                     Icon(Icons.directions, color: Colors.white, size: 18),
+//                                                     SizedBox(width: 6),
+//                                                     Text(
+//                                                       'Go',
+//                                                       style: TextStyle(
+//                                                         color: Colors.white,
+//                                                         fontWeight: FontWeight.w700,
+//                                                       ),
+//                                                     ),
+//                                                   ],
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                     ],
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
 //                           ),
 //                         ),
 //                       ],
@@ -688,3 +608,4 @@
 //     );
 //   }
 // }
+

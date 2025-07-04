@@ -265,10 +265,6 @@ class _LocationSearchFieldState extends State<LocationSearchField> {
     }
   }
 
-
-
-
-
   // @override
   // Widget build(BuildContext context) {
   //   return Column(

@@ -14,8 +14,6 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
   String? selectedCarBrand;
   String? selectedModelName;
 
-  
-
   final List<String> carTypes = ['Petrol', 'Hybrid', 'Electric Vehicle (EV)'];
   final List<String> vehicleTypes = ['Car', 'Motorcycle', 'Truck', 'SUV'];
   final Map<String, List<String>> vehicleBrandMap = {
@@ -26,22 +24,22 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
   };
 
   final Map<String, List<String>> brandModelMap = {
-  'Toyota': ['Vios', 'Camry', 'Corolla'],
-  'Honda': ['Civic', 'Accord', 'CBR'],
-  'BMW': ['X3', 'X5', 'i8'],
-  'Yamaha': ['R15', 'MT-15'],
-  'Ducati': ['Panigale', 'Monster'],
-  'Ford': ['F-150', 'Ranger'],
-  'Isuzu': ['D-Max'],
-  'Volvo': ['FH16'],
-  'Hyundai': ['Tucson', 'Santa Fe'],
-  'Kia': ['Seltos', 'Sportage'],
-  // 'Mercedes':
-  // 'Kawasaki':
-  // 'Vespa':
-  // 'Audi':
-  // 'Tesla':
-};
+    'Toyota': ['Vios', 'Camry', 'Corolla'],
+    'Honda': ['Civic', 'Accord', 'CBR'],
+    'BMW': ['X3', 'X5', 'i8'],
+    'Yamaha': ['R15', 'MT-15'],
+    'Ducati': ['Panigale', 'Monster'],
+    'Ford': ['F-150', 'Ranger'],
+    'Isuzu': ['D-Max'],
+    'Volvo': ['FH16'],
+    'Hyundai': ['Tucson', 'Santa Fe'],
+    'Kia': ['Seltos', 'Sportage'],
+    // 'Mercedes':
+    // 'Kawasaki':
+    // 'Vespa':
+    // 'Audi':
+    // 'Tesla':
+  };
   // final Map<String, List<String>> typeOptions = {
   //   'Car': ['Petrol', 'Hybrid', 'Electric (EV)'],
   //   'Motorcycle': ['Petrol', 'Electric'],
@@ -80,7 +78,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 24),
-                    _buildSectionTitle('Your current available vehicle(s):', screenWidth),
+                    _buildSectionTitle(
+                        'Your current available vehicle(s):', screenWidth),
                     const SizedBox(height: 16),
                     _buildDropdownContainer(
                       selectedCurrentVehicle,
@@ -97,7 +96,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                     _buildNewVehicleForm(),
                     const SizedBox(height: 32),
                     _buildAddVehicleButton(screenWidth),
-                    SizedBox(height: MediaQuery.of(context).padding.bottom + 32),
+                    SizedBox(
+                        height: MediaQuery.of(context).padding.bottom + 32),
                   ],
                 ),
               ),
@@ -156,8 +156,9 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
     );
   }
 
-  Widget _buildDropdownContainer(String? selectedValue, List<String> options, ValueChanged<String?> onChanged) {
-    return Padding( 
+  Widget _buildDropdownContainer(String? selectedValue, List<String> options,
+      ValueChanged<String?> onChanged) {
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
         width: double.infinity,
@@ -222,12 +223,11 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
 
   Widget _buildNewVehicleForm() {
     final List<String> availableBrands = selectedVehicleType != null
-      ? vehicleBrandMap[selectedVehicleType!] ?? []
-      : [];
+        ? vehicleBrandMap[selectedVehicleType!] ?? []
+        : [];
 
-  final List<String> availableModels = selectedCarBrand != null
-      ? brandModelMap[selectedCarBrand!] ?? []
-      : [];
+    final List<String> availableModels =
+        selectedCarBrand != null ? brandModelMap[selectedCarBrand!] ?? [] : [];
 
     return Container(
       width: double.infinity,
@@ -246,11 +246,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildFormField(
-            'Vehicle Type', 
-            selectedVehicleType, 
-            vehicleBrandMap.keys.toList(), 
-            (value) {
+          _buildFormField('Vehicle Type', selectedVehicleType,
+              vehicleBrandMap.keys.toList(), (value) {
             setState(() {
               // selectedVehicleType = value;
               // selectedCarType = null; // reset car type if vehicle changed
@@ -470,7 +467,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
         (isCar ? selectedCarType != null : true) &&
         selectedCarBrand != null &&
         selectedModelName != null) {
-      final newVehicle = '$selectedVehicleType - $selectedCarBrand $selectedModelName';
+      final newVehicle =
+          '$selectedVehicleType - $selectedCarBrand $selectedModelName';
 
       setState(() {
         curCar.add(newVehicle);
@@ -503,4 +501,3 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
     }
   }
 }
-

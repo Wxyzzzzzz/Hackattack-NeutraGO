@@ -29,7 +29,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F2E3),
       body: SafeArea(
@@ -37,7 +37,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
           children: [
             // Header with back button and title
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 children: [
                   GestureDetector(
@@ -68,7 +69,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                 ],
               ),
             ),
-            
+
             // Scrollable content
             Expanded(
               child: SingleChildScrollView(
@@ -77,7 +78,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 24),
-                    
+
                     // Current vehicle type section
                     Text(
                       'Your current vehicle type:',
@@ -90,7 +91,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Current vehicle dropdown
                     Container(
                       width: double.infinity,
@@ -124,7 +125,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
                                 child: Text(
                                   value,
                                   style: const TextStyle(
@@ -154,9 +156,9 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Add new vehicle section
                     Text(
                       'Add new vehicle:',
@@ -169,7 +171,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Form container
                     Container(
                       width: double.infinity,
@@ -200,7 +202,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Car Brand
                           _buildFormField(
                             'Car Brand',
@@ -213,7 +215,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           // Model Name
                           _buildFormField(
                             'Model Name',
@@ -228,9 +230,9 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Add New Vehicle Button
                     SizedBox(
                       width: double.infinity,
@@ -270,8 +272,9 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
                         ),
                       ),
                     ),
-                    
-                    SizedBox(height: MediaQuery.of(context).padding.bottom + 32),
+
+                    SizedBox(
+                        height: MediaQuery.of(context).padding.bottom + 32),
                   ],
                 ),
               ),
@@ -366,8 +369,8 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
   }
 
   void _addNewVehicle() {
-    if (selectedVehicleType != null && 
-        selectedCarBrand != null && 
+    if (selectedVehicleType != null &&
+        selectedCarBrand != null &&
         selectedModelName != null) {
       // Process the new vehicle data
       ScaffoldMessenger.of(context).showSnackBar(
@@ -379,7 +382,7 @@ class _VehicleSettingsScreenState extends State<VehicleSettingsScreen> {
           backgroundColor: const Color(0xFF22866E),
         ),
       );
-      
+
       // Reset form
       setState(() {
         selectedVehicleType = null;

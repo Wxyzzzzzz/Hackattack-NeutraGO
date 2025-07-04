@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/leaderboard.dart';
 
 class CarbonFootprintCard extends StatelessWidget {
   const CarbonFootprintCard({super.key});
@@ -86,7 +87,10 @@ class CarbonFootprintCard extends StatelessWidget {
             height: 48,
             child: ElevatedButton(
               onPressed: () {
-                // Handle leaderboard navigation
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LeaderboardPage()),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF153462),

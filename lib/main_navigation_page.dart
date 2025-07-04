@@ -25,6 +25,7 @@ class MainNavigationPage extends StatefulWidget {
 }
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
+  // int _selectedIndex = 0;
   late int _currentIndex;
 
   @override

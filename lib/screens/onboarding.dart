@@ -57,96 +57,102 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F2E4),
       body: SafeArea(
-        child: Stack(
-          children: [
-            PageView.builder(
-              controller: _pageController,
-              itemCount: _pages.length,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              itemBuilder: (context, index) {
-                final page = _pages[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 44),
-                      // App Title
-                      const Text(
-                        'Neutra GO',
-                        style: TextStyle(
-                          color: Color(0xFF102B23),
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: _pages.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    final page = _pages[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 24),
+                        // App Title
+                        const Text(
+                          'Neutra GO',
+                          style: TextStyle(
+                            color: Color(0xFF102B23),
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
-                      // Image
-                      SizedBox(
-                        height: 250,
-                        child: Image.asset(
-                          page.imageUrl,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.eco,
-                                  size: 120, color: Color(0xFF7A9B5A)),
+                        const SizedBox(height: 16),
+                        // Use Flexible for the main content
+                        Flexible(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Image
+                              SizedBox(
+                                height: 200,
+                                child: Image.asset(
+                                  page.imageUrl,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.eco,
+                                          size: 120, color: Color(0xFF7A9B5A)),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              // Title
+                              Text(
+                                page.title,
+                                style: const TextStyle(
+                                  color: Color(0xFF102B23),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              // Description
+                              Text(
+                                page.description,
+                                style: const TextStyle(
+                                  color: Color(0xFF3F816C),
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 40),
-                      // Title
-                      Text(
-                        page.title,
-                        style: const TextStyle(
-                          color: Color(0xFF102B23),
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      // Description
-                      Text(
-                        page.description,
-                        style: const TextStyle(
-                          color: Color(0xFF3F816C),
-                          fontSize: 16,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(_pages.length, (i) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 6),
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: i == _currentPage
-                                  ? const Color(0xFFFFAF44)
-                                  : const Color(0xFFFDE18B),
-                            ),
-                          );
-                        }),
-                      ),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
-                );
-              },
-            ),
-            // Skip Tour Button
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 80,
-              child: GestureDetector(
+                        const SizedBox(height: 8),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(_pages.length, (i) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: i == _currentPage
+                          ? const Color(0xFFFFAF44)
+                          : const Color(0xFFFDE18B),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 24),
+              GestureDetector(
                 onTap: _skipTour,
                 child: Center(
                   child: Text(
@@ -160,8 +166,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

@@ -16,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
 
   Future<void> _signOut() async {
-    try{
+    try {
       await _authService.signOut();
 
       if (mounted) {
@@ -51,7 +51,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   children: [
                     Icon(
@@ -108,7 +109,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF1F436D).withOpacity(0.25),
+                                    color: const Color(0xFF1F436D)
+                                        .withOpacity(0.25),
                                     offset: const Offset(0, 4),
                                     blurRadius: 6,
                                   ),
@@ -120,7 +122,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ? Image.network(
                                         user!.photoURL!,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(),
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                _buildDefaultAvatar(),
                                       )
                                     : _buildDefaultAvatar(),
                               ),
@@ -297,7 +301,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildMenuItem(String title, IconData icon, {required VoidCallback onTap}) {
+  Widget _buildMenuItem(String title, IconData icon,
+      {required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -322,7 +327,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildToggleItem(String title, bool value, ValueChanged<bool> onChanged) {
+  Widget _buildToggleItem(
+      String title, bool value, ValueChanged<bool> onChanged) {
     return Row(
       children: [
         Text(

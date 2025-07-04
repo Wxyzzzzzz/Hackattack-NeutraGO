@@ -23,15 +23,14 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        return const OnboardingScreen();
-
+        // Show main app if user is authenticated, otherwise show onboarding
         // if (snapshot.hasData && snapshot.data != null) {
         //   return const MainNavigationPage();
         // } else {
         //   return const OnboardingScreen();
         // }
 
-        
+        return const OnboardingScreen();
       },
     );
   }

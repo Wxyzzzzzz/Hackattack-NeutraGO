@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/carbon_calculator.dart';
 import '../screens/carbon_calculator_screen.dart';
 import '../screens/vehicle_settings.dart';
 
@@ -18,7 +19,8 @@ class ActionButtons extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CarbonCalculatorScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const CarbonCalculatorScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -68,9 +70,11 @@ class ActionButtons extends StatelessWidget {
             margin: const EdgeInsets.only(left: 8),
             child: ElevatedButton(
               onPressed: () {
+                // Handle vehicle settings navigation
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const VehicleSettingsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const VehicleSettingsScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(

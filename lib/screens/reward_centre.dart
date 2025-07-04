@@ -1,221 +1,322 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/auth_service.dart';
+import 'reward_detail.dart';
+import 'home_screen.dart';
+import 'past_trips_screen.dart';
 
 class RewardsCentrePage extends StatelessWidget {
   const RewardsCentrePage({Key? key}) : super(key: key);
+
+  Future<int> _fetchUserPoints() async {
+    final userId = 'jAENInMkzS0KvYyVSyJA';
+    final doc =
+        await FirebaseFirestore.instance.collection('user').doc(userId).get();
+    if (doc.exists &&
+        doc.data() != null &&
+        doc.data()!.containsKey('total_points')) {
+      return doc['total_points'] ?? 0;
+    }
+    return 0;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      body: Column(
-        children: [
-          // Header background
-          Container(
-            width: double.infinity,
-            height: 100,
-            color: const Color(0xFFF3F2E4),
-            child: Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 91,
-                  color: const Color(0xFFF3F2E4),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F2E4),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 52,
-                  child: Center(
-                    child: Text(
-                      'Rewards Centre',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF153462),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Rectangle box for user points
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
-            child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Header background
+            Container(
               width: double.infinity,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Color(0xFF22866E),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              height: 100,
+              color: const Color(0xFFF3F2E4),
+              child: Stack(
                 children: [
-                  Icon(Icons.emoji_events, color: Color(0xFFFFAF44), size: 32),
-                  SizedBox(width: 30),
-                  Text(
-                    'Your Points: ',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                  Container(
+                    width: double.infinity,
+                    height: 91,
+                    color: const Color(0xFFF3F2E4),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3F2E4),
+                      borderRadius: BorderRadius.circular(0),
                     ),
                   ),
-                  Text(
-                    '1,250',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Popular Merchants (horizontally scrollable)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
-            child: SizedBox(
-              height: 90,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                children: const [
-                  _MerchantCircle(name: 'Starbucks'),
-                  SizedBox(width: 24),
-                  _MerchantCircle(name: 'McDonalds'),
-                  SizedBox(width: 24),
-                  _MerchantCircle(name: 'KFC'),
-                  SizedBox(width: 24),
-                  _MerchantCircle(name: 'Pizzahut'),
-                  SizedBox(width: 24),
-                  _MerchantCircle(name: 'Tealive'),
-                  SizedBox(width: 24),
-                  _MerchantCircle(name: 'FamilyMart'),
-                ],
-              ),
-            ),
-          ),
-          // Promo & Rewards
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Promo & Rewards',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF153462),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PromoListPage(),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 52,
+                    child: Center(
+                      child: Text(
+                        'Rewards Centre',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF153462),
+                        ),
                       ),
-                    );
-                  },
-                  child: const Text(
-                    'View All',
-                    style: TextStyle(
-                      color: Color(0xFF22866E),
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                ],
+              ),
+            ),
+            // Rectangle box for user points
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+              child: Container(
+                width: double.infinity,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Color(0xFF22866E),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.emoji_events,
+                        color: Color(0xFFFFAF44), size: 32),
+                    SizedBox(width: 30),
+                    Text(
+                      'Your Points: ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    FutureBuilder<int>(
+                      future: _fetchUserPoints(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return SizedBox(
+                            width: 40,
+                            height: 28,
+                            child: Center(
+                              child: SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        final points = snapshot.data ?? 0;
+                        return Text(
+                          points.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 230, // Height to fit the promo card
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: 3,
-              separatorBuilder: (context, index) => SizedBox(width: 16),
-              itemBuilder: (context, index) {
-                final promos = [
-                  {
-                    'image':
-                        'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-                    'title': 'Pizza Hut RM 10 off',
-                    'points': '300 pts',
-                    'color': Color(0xFFBADCBC),
-                    'subtitleColor': Color(0xFF3F8167),
-                  },
-                  {
-                    'image':
-                        'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-                    'title': 'Pizza Hut RM 10 off',
-                    'points': '300 pts',
-                    'color': Color(0xFFBADCBC),
-                    'subtitleColor': Color(0xFF3F8167),
-                  },
-                  {
-                    'image':
-                        'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-                    'title': '7-Eleven RM 2 Cashback',
-                    'points': '100 pts',
-                    'color': Color(0xFFBADCBC),
-                    'subtitleColor': Color(0xFF3F8167),
-                  },
-                ];
-                final promo = promos[index];
-                return SizedBox(
-                  width: 260,
-                  child: PromoCard(
-                    image: promo['image'] as String,
-                    title: promo['title'] as String,
-                    points: promo['points'] as String,
-                    color: promo['color'] as Color,
-                    subtitleColor: promo['subtitleColor'] as Color,
+            // Popular Merchants (horizontally scrollable)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
+              child: SizedBox(
+                height: 100,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  children: const [
+                    _MerchantCircle(
+                        name: 'Petronas', imagePath: 'assets/petronus.jpg'),
+                    SizedBox(width: 24),
+                    _MerchantCircle(
+                        name: 'Lotus', imagePath: 'assets/lotus.jpg'),
+                    SizedBox(width: 24),
+                    _MerchantCircle(name: 'KFC', imagePath: 'assets/kfc.png'),
+                    SizedBox(width: 24),
+                    _MerchantCircle(
+                        name: 'Pizzahut', imagePath: 'assets/pizzahut.jpg'),
+                    SizedBox(width: 24),
+                    _MerchantCircle(
+                        name: 'Shopee', imagePath: 'assets/shopee.jpg'),
+                    SizedBox(width: 24),
+                    _MerchantCircle(
+                        name: 'FamilyMart', imagePath: 'assets/fammart.png'),
+                  ],
+                ),
+              ),
+            ),
+            // Promo & Rewards
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Promo & Rewards',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF153462),
+                    ),
                   ),
-                );
-              },
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PromoListPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'View All',
+                      style: TextStyle(
+                        color: Color(0xFF22866E),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          // Rewards List
-          // Expanded(
-          //   child: ListView(
-          //     padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-          //     children: const [
-          //       _RewardPromoCard(
-          //         merchant: 'Starbucks',
-          //         title: 'Get a Free Coffee from Starbucks',
-          //         points: 280,
-          //         color: Color(0xFFFFAF44),
-          //       ),
-          //       SizedBox(height: 16),
-          //       _RewardPromoCard(
-          //         merchant: 'Pizza Hut',
-          //         title: 'Pizza Hut RM 10 off',
-          //         points: 300,
-          //         color: Color(0xFF7A9B5A),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-        ],
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 230, // Height to fit the promo card
+              child: FutureBuilder<QuerySnapshot>(
+                future: FirebaseFirestore.instance.collection('rewards').get(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  final docs = snapshot.data!.docs;
+                  final rewards = List.generate(3, (index) {
+                    if (index < docs.length) {
+                      final data = docs[index].data() as Map<String, dynamic>;
+                      return {
+                        'id': docs[index].id,
+                        'title': data['reward_title'] ?? '',
+                        'points': '${data['required_points'] ?? 0} pts',
+                      };
+                    } else {
+                      return {
+                        'id': '',
+                        'title': '',
+                        'points': '',
+                      };
+                    }
+                  });
+
+                  final promos = [
+                    {
+                      'image': 'assets/lotus.jpg',
+                      'color': Color(0xFFBADCBC),
+                      'subtitleColor': Color(0xFF3F8167),
+                    },
+                    {
+                      'image': 'assets/transport.jpg',
+                      'color': Color(0xFFBADCBC),
+                      'subtitleColor': Color(0xFF3F8167),
+                    },
+                    {
+                      'image': 'assets/bottle.jpg',
+                      'color': Color(0xFFBADCBC),
+                      'subtitleColor': Color(0xFF3F8167),
+                    },
+                    {
+                      'image': 'assets/pizzahut.jpg',
+                      'color': Color(0xFFBADCBC),
+                      'subtitleColor': Color(0xFF3F8167),
+                    },
+                    {
+                      'image': 'assets/bike.jpeg',
+                      'color': Color(0xFFBADCBC),
+                      'subtitleColor': Color(0xFF3F8167),
+                    },
+                    {
+                      'image': 'assets/coffee.jpg',
+                      'color': Color(0xFFBADCBC),
+                      'subtitleColor': Color(0xFF3F8167),
+                    },
+                  ];
+
+                  return ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 3,
+                    separatorBuilder: (context, index) => SizedBox(width: 16),
+                    itemBuilder: (context, index) {
+                      final promo = promos[index];
+                      final reward = rewards[index];
+                      return GestureDetector(
+                        onTap: reward['id'] != ''
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RewardDetailPage(
+                                      rewardId: reward['id'],
+                                      imageUrl: promo['image'] as String?,
+                                      title: reward['title'],
+                                      points: reward['points'],
+                                    ),
+                                  ),
+                                );
+                              }
+                            : null,
+                        child: SizedBox(
+                          width: 260,
+                          child: PromoCard(
+                            image: promo['image'] as String,
+                            title: reward['title'] as String,
+                            points: reward['points'] as String,
+                            color: promo['color'] as Color,
+                            subtitleColor: promo['subtitleColor'] as Color,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            // Rewards List
+            // Expanded(
+            //   child: ListView(
+            //     padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+            //     children: const [
+            //       _RewardPromoCard(
+            //         merchant: 'Starbucks',
+            //         title: 'Get a Free Coffee from Starbucks',
+            //         points: 280,
+            //         color: Color(0xFFFFAF44),
+            //       ),
+            //       SizedBox(height: 16),
+            //       _RewardPromoCard(
+            //         merchant: 'Pizza Hut',
+            //         title: 'Pizza Hut RM 10 off',
+            //         points: 300,
+            //         color: Color(0xFF7A9B5A),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // Add bottom padding for better scrolling experience
+            SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
@@ -223,7 +324,8 @@ class RewardsCentrePage extends StatelessWidget {
 
 class _MerchantCircle extends StatelessWidget {
   final String name;
-  const _MerchantCircle({required this.name});
+  final String imagePath;
+  const _MerchantCircle({required this.name, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +334,7 @@ class _MerchantCircle extends StatelessWidget {
         CircleAvatar(
           radius: 32,
           backgroundColor: Colors.grey[300],
-          child: Icon(Icons.store, color: Colors.white, size: 36),
+          backgroundImage: AssetImage(imagePath),
         ),
         const SizedBox(height: 8),
         Text(name, style: const TextStyle(fontSize: 12)),
@@ -313,45 +415,87 @@ class PromoListPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        children: [
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-            title: 'Get a Free Coffee from Starbucks',
-            points: '280 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-          SizedBox(height: 24),
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-            title: 'Pizza Hut RM 10 off',
-            points: '300 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-          SizedBox(height: 24),
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-            title: '7-Eleven RM 2 Cashback',
-            points: '100 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-          SizedBox(height: 24),
-          PromoCard(
-            image:
-                'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
-            title: 'TNG RM 1 Cashback',
-            points: '50 pts',
-            color: Color(0xFFBADCBC),
-            subtitleColor: Color(0xFF3F8167),
-          ),
-        ],
+      body: FutureBuilder<QuerySnapshot>(
+        future: FirebaseFirestore.instance.collection('rewards').get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          final docs = snapshot.data!.docs;
+          final promos = [
+            {
+              'image': 'assets/lotus.jpg',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image': 'assets/rapid.png',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image': 'assets/bottle.jpg',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image': 'assets/pizza.jpg',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image': 'assets/bike.jpg',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+            {
+              'image': 'assets/starbucks.jpg',
+              'color': Color(0xFFBADCBC),
+              'subtitleColor': Color(0xFF3F8167),
+            },
+          ];
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            itemCount: promos.length,
+            separatorBuilder: (context, index) => SizedBox(height: 24),
+            itemBuilder: (context, index) {
+              final promo = promos[index];
+              String title = '';
+              String points = '';
+              String rewardId = '';
+              if (index < docs.length) {
+                final data = docs[index].data() as Map<String, dynamic>;
+                title = data['reward_title'] ?? '';
+                points = '${data['required_points'] ?? 0} pts';
+                rewardId = docs[index].id;
+              }
+              return GestureDetector(
+                onTap: rewardId != ''
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RewardDetailPage(
+                              rewardId: rewardId,
+                              imageUrl: promo['image'] as String?,
+                              title: title,
+                              points: points,
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
+                child: PromoCard(
+                  image: promo['image'] as String,
+                  title: title,
+                  points: points,
+                  color: promo['color'] as Color,
+                  subtitleColor: promo['subtitleColor'] as Color,
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -392,7 +536,7 @@ class PromoCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
+            child: Image.asset(
               image,
               height: 143,
               width: double.infinity,

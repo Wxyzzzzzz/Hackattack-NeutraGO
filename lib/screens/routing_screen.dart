@@ -79,9 +79,8 @@ class _RoutingScreenState extends State<RoutingScreen> {
   }
 
   void _drawRoute() {
-    final routePoints = widget.polylineCoordinates
-        .map((p) => LatLng(p[0], p[1]))
-        .toList();
+    final routePoints =
+        widget.polylineCoordinates.map((p) => LatLng(p[0], p[1])).toList();
 
     _polylines.add(Polyline(
       polylineId: const PolylineId("route"),

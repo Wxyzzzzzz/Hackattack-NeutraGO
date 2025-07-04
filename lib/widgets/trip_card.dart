@@ -26,9 +26,9 @@ class TripCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           // BoxShadow(
-            // color: Colors.black.withOpacity(0.08),
-            // blurRadius: 0.5,
-            // offset: const Offset(0, 4),
+          // color: Colors.black.withOpacity(0.08),
+          // blurRadius: 0.5,
+          // offset: const Offset(0, 4),
           // ),
         ],
       ),
@@ -72,7 +72,7 @@ class TripCard extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Trip Details Section
           Container(
             width: 348,
@@ -100,7 +100,7 @@ class TripCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Start and End Locations
                   Expanded(
                     child: Row(
@@ -121,21 +121,24 @@ class TripCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        
+
                         // Dotted Line
                         Expanded(
                           flex: 3,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
                             child: Row(
                               children: List.generate(
                                 20,
                                 (index) => Expanded(
                                   child: Container(
                                     height: 1,
-                                    margin: const EdgeInsets.symmetric(horizontal: 1),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 1),
                                     decoration: BoxDecoration(
-                                      color: index % 2 == 0 ? Colors.black : Colors.transparent,
+                                      color: index % 2 == 0
+                                          ? Colors.black
+                                          : Colors.transparent,
                                     ),
                                   ),
                                 ),
@@ -143,7 +146,7 @@ class TripCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         // End Location
                         Expanded(
                           flex: 2,

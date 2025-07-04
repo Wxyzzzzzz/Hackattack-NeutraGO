@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
@@ -89,7 +89,6 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
     });
   }
 
-
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -120,7 +119,8 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
         Marker(
           markerId: const MarkerId('current_location'),
           position: currentLatLng,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           infoWindow: const InfoWindow(title: 'You are here'),
         ),
       );
@@ -203,7 +203,8 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                     child: GoogleMap(
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
-                        target: _currentMapCenter ?? const LatLng(5.36, 100.302),
+                        target:
+                            _currentMapCenter ?? const LatLng(5.36, 100.302),
                         // target: LatLng(5.36, 100.302),
                         zoom: 13.0,
                       ),
@@ -245,28 +246,35 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.search, color: Color(0xFF153462)),
+                              icon: const Icon(Icons.search,
+                                  color: Color(0xFF153462)),
                               // onPressed: () => _onSearchChanged(_searchController.text),
                               onPressed: () async {
                                 final inputText = _searchController.text.trim();
 
-                                if (inputText.isEmpty || _selectedDestination == null) {
-                                  _onSearchChanged(inputText); // Still allow autocomplete to function
+                                if (inputText.isEmpty ||
+                                    _selectedDestination == null) {
+                                  _onSearchChanged(
+                                      inputText); // Still allow autocomplete to function
                                   return;
                                 }
 
                                 // 🧭 Same as "Go" button logic
-                                final position = await Geolocator.getCurrentPosition(
-                                    desiredAccuracy: LocationAccuracy.high);
-                                final LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+                                final position =
+                                    await Geolocator.getCurrentPosition(
+                                        desiredAccuracy: LocationAccuracy.high);
+                                final LatLng currentLatLng = LatLng(
+                                    position.latitude, position.longitude);
                                 // const LatLng currentLatLng = LatLng(5.36, 100.302);
                                 final DateTime timestamp = DateTime.now();
-                                const String userId = 'user_001'; // Replace with actual user ID if needed
+                                const String userId =
+                                    'user_001'; // Replace with actual user ID if needed
 
                                 if (!context.mounted) return;
 
                                 mapController.animateCamera(
-                                  CameraUpdate.newLatLngZoom(_selectedDestination!, 16),
+                                  CameraUpdate.newLatLngZoom(
+                                      _selectedDestination!, 16),
                                 );
 
                                 Navigator.push(
@@ -343,7 +351,8 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
                   ],
                 ),
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -561,9 +570,7 @@ class _TripPlanningMainPageState extends State<TripPlanningMainPage> {
       // ),
     );
   }
-
 }
-
 
 class _DestinationTypeButton extends StatelessWidget {
   final IconData icon;
