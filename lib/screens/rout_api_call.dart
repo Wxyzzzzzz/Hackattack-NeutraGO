@@ -35,12 +35,15 @@ class _RunningModelState extends State<RunningModel> {
   }
 
   Future<void> fetchRecommendation() async {
-    final url = Uri.parse("http://10.0.2.2:8000/recommend"); // replace with actual backend URL
+    // final url = Uri.parse("http://10.0.2.2:8000/recommend"); // replace with actual backend URL
+    final url = Uri.parse("https://route-suggest.onrender.com/recommend");
 
     final body = {
       "user_id": "jAENInMkzS0KvYyVSyJA",
-      "origin": "${widget.currentLocation.latitude}, ${widget.currentLocation.longitude}",
-      "destination": "${widget.destination.latitude}, ${widget.destination.longitude}",
+      "origin":
+          "${widget.currentLocation.latitude}, ${widget.currentLocation.longitude}",
+      "destination":
+          "${widget.destination.latitude}, ${widget.destination.longitude}",
     };
 
     try {
@@ -118,12 +121,12 @@ class _RunningModelState extends State<RunningModel> {
     //             ),
     // );
     return Scaffold(
-    body: Center(
-      child: isLoading
-          ? const CircularProgressIndicator()
-          // : const Text("Recommendation fetched."),
-          : const CircularProgressIndicator(),
-    ),
-  );
+      body: Center(
+        child: isLoading
+            ? const CircularProgressIndicator()
+            // : const Text("Recommendation fetched."),
+            : const CircularProgressIndicator(),
+      ),
+    );
   }
 }

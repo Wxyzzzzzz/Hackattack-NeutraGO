@@ -40,11 +40,11 @@ class CarbonCalculator extends StatelessWidget {
               TransportationModeCard(
                 icon: Icons.directions_walk,
                 title: 'Walking',
-                emissions: '50 g/km',
+                emissions: '0 g/km',
                 backgroundColor: const Color(0xFFBAD1C1),
               ),
               const SizedBox(height: 23),
-              
+
               // Car Card with Congestion Table
               CongestionTableCard(
                 icon: Icons.directions_car,
@@ -53,7 +53,7 @@ class CarbonCalculator extends StatelessWidget {
                 backgroundColor: const Color(0xFFBAD1C1),
               ),
               const SizedBox(height: 23),
-              
+
               // Motorcycle Card with Congestion Table
               CongestionTableCard(
                 icon: Icons.motorcycle,
@@ -62,7 +62,7 @@ class CarbonCalculator extends StatelessWidget {
                 backgroundColor: const Color(0xFFBAD1C1),
               ),
               const SizedBox(height: 23),
-              
+
               // Public Transit Card
               PublicTransitCard(
                 backgroundColor: const Color(0xFFBAD1C1),
@@ -117,7 +117,7 @@ class PublicTransitCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Bus Section with Congestion Table
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 24),
@@ -185,7 +185,7 @@ class PublicTransitCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
+
                       // Table Data
                       const Positioned(
                         left: 39,
@@ -301,7 +301,7 @@ class PublicTransitCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      
+
                       // Table separators
                       Positioned(
                         left: 114,
@@ -336,7 +336,7 @@ class PublicTransitCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Emissions values section
           const SizedBox(height: 12),
           Padding(

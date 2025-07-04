@@ -3,8 +3,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hackattack/main_navigation_page.dart';
 
-import 'trip_planning_main.dart';
+import 'trip_planner.dart';
+import 'routing_screen.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final List<dynamic> recommendations;
@@ -26,6 +28,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   late GoogleMapController mapController;
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
+  int currentRouteIndex = 0;
 
   @override
   void initState() {
@@ -33,7 +36,25 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     _setupMapData();
   }
 
+  // Color _getColorForMode(String mode) {
+  //     switch (mode.toLowerCase()) {
+  //       case 'walking':
+  //         return Colors.grey;
+  //       case 'bicycling':
+  //         return Colors.green;
+  //       case 'driving':
+  //         return Colors.blue;
+  //       case 'transit':
+  //         return Colors.orange;
+  //       default:
+  //         return Colors.black;
+  //     }
+  //   }
+
   void _setupMapData() {
+    _markers.clear();
+    _polylines.clear();
+
     _markers.addAll([
       Marker(
         markerId: const MarkerId('start'),
@@ -47,46 +68,102 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       ),
     ]);
 
-  //   _polylines.add(
-  //     Polyline(
-  //       polylineId: const PolylineId('route'),
-  //       points: [widget.startLocation, widget.endLocation],
-  //       color: Colors.black,
-  //       width: 3,
-  //     ),
-  //   );
-  // }
-        // Get polyline points from the first recommendation
-        if (widget.recommendations.isNotEmpty) {
-          final List<dynamic> polylinePoints = widget.recommendations[0]['polyline_points'];
-          final List<LatLng> latLngPoints = polylinePoints
-              .map<LatLng>((point) => LatLng(point[0], point[1]))
-              .toList();
+    // Draw polyline from recommended route
+    if (widget.recommendations.isNotEmpty) {
+      final recommendation =
+          widget.recommendations[currentRouteIndex]; // top-ranked route
+      final List<dynamic> coords = recommendation['polyline_points'];
 
-          _polylines.add(
-            Polyline(
-              polylineId: const PolylineId('route'),
-              points: latLngPoints,
-              color: Colors.grey,
-              width: 5,
-            ),
-          );
-        } else {
-          // Fallback: draw a direct line if no polyline available
-          _polylines.add(
-            Polyline(
-              polylineId: const PolylineId('route'),
-              points: [widget.startLocation, widget.endLocation],
-              color: Colors.grey,
-              width: 3,
-            ),
-          );
-        }
-      }
+      final List<LatLng> polylinePoints = coords.map<LatLng>((coord) {
+        return LatLng(coord[0], coord[1]); // Convert each [lat, lng] to LatLng
+      }).toList();
+
+      _polylines.add(
+        Polyline(
+          polylineId: PolylineId('route_$currentRouteIndex'),
+          points: polylinePoints,
+          color: Colors.blueAccent,
+          width: 3,
+        ),
+      );
+    }
+    //   final steps = recommendation['steps'] as List<dynamic>;
+
+    //   for (int i = 0; i < steps.length; i++) {
+    //     final step = steps[i];
+    //     final mode = step['mode'].toString().toLowerCase(); // e.g., "walking", "transit", "driving"
+
+    //     final coords = step['polyline_points']; // e.g., [[lat, lng], [lat, lng], ...]
+    //     if (coords == null || coords.length < 2) continue;
+
+    //     final List<LatLng> polylinePoints = coords.map<LatLng>((coord) {
+    //       return LatLng(coord[0], coord[1]);
+    //     }).toList();
+
+    //     _polylines.add(
+    //       Polyline(
+    //         polylineId: PolylineId('route_${currentRouteIndex}_step_$i'),
+    //         points: polylinePoints,
+    //         color: _getColorForMode(mode),
+    //         width: 4,
+    //       ),
+    //     );
+    //   }
+    // }
+  }
+
+  LatLngBounds _createBoundsFromPoints(List<dynamic> points) {
+    final latLngList = points.map((e) => LatLng(e[0], e[1])).toList();
+
+    double south = latLngList.first.latitude;
+    double north = latLngList.first.latitude;
+    double west = latLngList.first.longitude;
+    double east = latLngList.first.longitude;
+
+    for (var point in latLngList) {
+      south = point.latitude < south ? point.latitude : south;
+      north = point.latitude > north ? point.latitude : north;
+      west = point.longitude < west ? point.longitude : west;
+      east = point.longitude > east ? point.longitude : east;
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(south, west),
+      northeast: LatLng(north, east),
+    );
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+
+    // Zoom into current route
+    final polylinePoints =
+        widget.recommendations[currentRouteIndex]['polyline_points'];
+    if (polylinePoints.isNotEmpty) {
+      final bounds = _createBoundsFromPoints(polylinePoints);
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+    }
   }
+
+  //   // Collect all coordinates across all steps of the selected route
+  //   final route = widget.recommendations[currentRouteIndex];
+  //   final steps = route['steps'] as List<dynamic>;
+
+  //   List<LatLng> allPoints = [];
+
+  //   for (final step in steps) {
+  //     final coords = step['polyline_points'] as List<dynamic>;
+  //     if (coords.isNotEmpty) {
+  //       final stepPoints = coords.map((c) => LatLng(c[0], c[1])).toList();
+  //       allPoints.addAll(stepPoints);
+  //     }
+  //   }
+
+  //   if (allPoints.isNotEmpty) {
+  //     final bounds = _createBoundsFromPoints(allPoints);
+  //     controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+  //   }
+  // }
 
   IconData getTransportIcon(String mode) {
     switch (mode.toLowerCase()) {
@@ -105,7 +182,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bestRoute = widget.recommendations.isNotEmpty ? widget.recommendations[0] : null;
+    final bestRoute =
+        widget.recommendations.isNotEmpty ? widget.recommendations[0] : null;
     final otherRoutes = widget.recommendations.length > 1
         ? widget.recommendations.sublist(1)
         : [];
@@ -115,7 +193,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
+            // === Header ===
             Container(
               height: 70,
               color: const Color(0xFFF3F2E3),
@@ -124,15 +202,17 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                 child: Row(
                   children: [
                     IconButton(
-                      // onPressed: () => Navigator.of(context).pop(),
                       onPressed: () {
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => TripPlanningMainPage()),
-                          (route) => false, // Remove all previous routes
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  MainNavigationPage(initialIndex: 1)),
+                          (route) => false,
                         );
                       },
-                      icon: const Icon(Icons.arrow_back, color: Color(0xFF153462), size: 28),
+                      icon: const Icon(Icons.arrow_back,
+                          color: Color(0xFF153462), size: 28),
                     ),
                     const Expanded(
                       child: Text(
@@ -151,91 +231,126 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               ),
             ),
 
-            // Map
+            // === Map Section ===
+            Expanded(
+              flex: 2,
+              child: GoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: widget.startLocation,
+                  zoom: 14.0,
+                ),
+                markers: _markers,
+                polylines: _polylines,
+                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
+              ),
+            ),
+
+            // === Stack for Details + Fixed Button ===
             Expanded(
               flex: 2,
               child: Stack(
                 children: [
-                  GoogleMap(
-                    onMapCreated: _onMapCreated,
-                    initialCameraPosition: CameraPosition(
-                      target: widget.startLocation,
-                      zoom: 14.0,
+                  // === Scrollable Details Section ===
+                  Positioned.fill(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (bestRoute != null) ...[
+                            const Text(
+                              'Best Route',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF1E1E1E),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  currentRouteIndex = 0;
+                                  _setupMapData();
+                                });
+                              },
+                              child: _buildRouteCard(
+                                bestRoute,
+                                isSelected: currentRouteIndex == 0,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                          if (otherRoutes.isNotEmpty) ...[
+                            const Text(
+                              'Other Routes',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF1E1E1E),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            for (int i = 0; i < otherRoutes.length; i++)
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    currentRouteIndex = i + 1;
+                                    _setupMapData();
+                                  });
+                                },
+                                child: _buildSimpleRouteCard(
+                                  otherRoutes[i],
+                                  isSelected: currentRouteIndex == i + 1,
+                                ),
+                              ),
+                            const SizedBox(height: 80), // space for the button
+                          ],
+                        ],
+                      ),
                     ),
-                    markers: _markers,
-                    polylines: _polylines,
-                    zoomControlsEnabled: false,
-                    mapToolbarEnabled: false,
+                  ),
+
+                  // === Fixed "Go" Button ===
+                  Positioned(
+                    bottom: 16,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          final selectedRoute =
+                              widget.recommendations[currentRouteIndex];
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RoutingScreen(
+                                polylineCoordinates:
+                                    selectedRoute['polyline_points'],
+                                destination: widget.endLocation,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.directions),
+                        label: const Text("Go"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[700],
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 14),
+                          textStyle: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
-              ),
-            ),
-
-            // Details Section
-            Expanded(
-              flex: 2,
-              child: Container(
-                width: double.infinity,
-                // padding: const EdgeInsets.all(24),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                ),
-                // child: Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                  // children: [
-                  //   if (bestRoute != null) ...[
-                  //     const Text('Best Route',
-                  //         style: TextStyle(
-                  //             fontSize: 18,
-                  //             fontWeight: FontWeight.w700,
-                  //             color: Color(0xFF1E1E1E))),
-                  //     const SizedBox(height: 16),
-                  //     _buildRouteCard(bestRoute),
-                  //     const SizedBox(height: 24),
-                  //   ],
-                  child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (bestRoute != null) ...[
-                        const Text('Best Route',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1E1E1E))),
-                        const SizedBox(height: 16),
-                        _buildRouteCard(bestRoute),
-                        const SizedBox(height: 24),
-                      ],
-
-                      if (otherRoutes.isNotEmpty) ...[
-                        const Text('Other Routes',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1E1E1E))),
-                        const SizedBox(height: 16),
-                        for (var route in otherRoutes) _buildSimpleRouteCard(route),
-                      ]
-                    ],
-                  ),
-
-                  //   if (otherRoutes.isNotEmpty) ...[
-                  //     const Text('Other Routes',
-                  //         style: TextStyle(
-                  //             fontSize: 18,
-                  //             fontWeight: FontWeight.w700,
-                  //             color: Color(0xFF1E1E1E))),
-                  //     const SizedBox(height: 16),
-                  //     for (var route in otherRoutes) _buildSimpleRouteCard(route),
-                  //   ]
-                  // ],
-                ),
               ),
             ),
           ],
@@ -244,41 +359,46 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     );
   }
 
-  Widget _buildRouteCard(dynamic route) {
+  Widget _buildRouteCard(dynamic route, {bool isSelected = false}) {
     final steps = route['steps'] as List<dynamic>;
     final totalTime = route['total_time'];
     final totalEmission = route['total_emission'];
 
-    // final transportModes = steps.take(2).map((s) {
-    //   final mode = s.split('via').last.trim();
-    //   return getTransportIcon(mode);
-    // }).toList();
-    final transportModes = <IconData>[];
+    final List<Widget> transportWidgets = [];
     String? lastMode;
-    for (var s in steps.take(2)) {
+    bool isFirst = true;
+
+    for (var s in steps) {
       final mode = s.split('via').last.trim();
       if (mode != lastMode) {
-        transportModes.add(getTransportIcon(mode));
+        if (!isFirst) {
+          transportWidgets.add(const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: Text('>',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ));
+        }
+
+        transportWidgets.add(Icon(getTransportIcon(mode), size: 24));
         lastMode = mode;
+        isFirst = false;
       }
     }
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
+        // color: const Color(0xFFD9D9D9),
         color: const Color(0xFFD9D9D9),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF4D2161), width: 2),
+        border: Border.all(
+          color: isSelected ? const Color(0xFF22866E) : const Color(0xFFD9D9D9),
+          width: 2,
+        ),
       ),
       child: Row(
         children: [
-          Column(
-            children: transportModes
-                .map((icon) => Column(
-                      children: [Icon(icon, size: 24), const SizedBox(height: 4)],
-                    ))
-                .toList(),
-          ),
+          Row(children: transportWidgets),
           const Spacer(),
           Column(
             children: [
@@ -286,7 +406,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700)),
               Text('Saves ${totalEmission.toStringAsFixed(0)}g CO₂',
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                  style: const TextStyle(
+                      fontSize: 10, fontWeight: FontWeight.w600)),
             ],
           )
         ],
@@ -294,18 +415,29 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     );
   }
 
-  Widget _buildSimpleRouteCard(dynamic route) {
+  Widget _buildSimpleRouteCard(dynamic route, {bool isSelected = false}) {
     final steps = route['steps'] as List<dynamic>;
     final totalTime = route['total_time'];
     final totalEmission = route['total_emission'];
 
-    final transportModes = <IconData>[];
+    final List<Widget> transportWidgets = [];
     String? lastMode;
-    for (var s in steps.take(2)) {
+    bool isFirst = true;
+
+    for (var s in steps) {
       final mode = s.split('via').last.trim();
       if (mode != lastMode) {
-        transportModes.add(getTransportIcon(mode));
+        if (!isFirst) {
+          transportWidgets.add(const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: Text('>',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ));
+        }
+
+        transportWidgets.add(Icon(getTransportIcon(mode), size: 24));
         lastMode = mode;
+        isFirst = false;
       }
     }
 
@@ -314,14 +446,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFD9D9D9),
+        // color: const Color(0xFFD9D9D9),
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isSelected ? const Color(0xFF22866E) : const Color(0xFFD9D9D9),
+          width: 2,
+        ),
       ),
       child: Row(
         children: [
-          Row(children: transportModes.map((icon) => Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Icon(icon, size: 24),
-          )).toList()),
+          Row(children: transportWidgets),
           const Spacer(),
           Column(
             children: [
@@ -329,7 +463,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700)),
               Text('${totalEmission.toStringAsFixed(0)}g CO₂',
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                  style: const TextStyle(
+                      fontSize: 10, fontWeight: FontWeight.w600)),
             ],
           )
         ],

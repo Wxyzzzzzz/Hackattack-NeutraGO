@@ -8,44 +8,55 @@ import 'package:hackattack/screens/login.dart';
 // import 'services/auth_service.dart';
 // import 'screens/onboarding.dart';
 import 'screens/reward_centre.dart';
-import 'screens/trip_planning_main.dart';
+// import 'screens/trip_planning_main.dart';
+import 'screens/trip_planner.dart';
+import 'screens/profile_screen.dart';
 // import 'screens/login.dart';
 
 import 'screens/home_screen.dart';
 
 class MainNavigationPage extends StatefulWidget {
-  const MainNavigationPage({Key? key}) : super(key: key);
+  final int initialIndex;
+
+  const MainNavigationPage({Key? key, this.initialIndex = 0}) : super(key: key);
 
   @override
   State<MainNavigationPage> createState() => _MainNavigationPageState();
 }
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
-  int _selectedIndex = 0;
+  // int _selectedIndex = 0;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   static final List<Widget> _pages = <Widget>[
     const HomeScreen(),
     const TripPlanningMainPage(),
     const RewardsCentrePage(),
-    const HomeScreen(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: const Color(0xFF153462),
         unselectedItemColor: Colors.grey,
-        currentIndex: _selectedIndex,
+        currentIndex: _currentIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(

@@ -124,12 +124,12 @@ class TripCard extends StatelessWidget {
 
                         // Dotted Line
                         Expanded(
-                          flex: 1,
+                          flex: 3,
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 4),
                             child: Row(
                               children: List.generate(
-                                6,
+                                20,
                                 (index) => Expanded(
                                   child: Container(
                                     height: 1,
@@ -149,7 +149,7 @@ class TripCard extends StatelessWidget {
 
                         // End Location
                         Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: Text(
                             endLocation,
                             style: const TextStyle(
