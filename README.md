@@ -49,10 +49,14 @@ NeutraGO automatically detects your transportation modes (walking, car, bus, etc
    flutter run
    ```
 
+
+
 ### Route Suggestion Model
    The source code for route suggestion model can be obtained from the Github link below:
    
    [Route Suggestion Model](https://github.com/ceeee33/route_suggest.git)
+
+
    
 ---
 
