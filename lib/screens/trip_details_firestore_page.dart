@@ -122,7 +122,7 @@ class _TripDetailsFirestorePageState extends State<TripDetailsFirestorePage> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                color: const Color(0xFFBADCBC),
+                color: const Color(0xFFBAD1C1),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 16),

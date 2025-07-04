@@ -55,40 +55,40 @@ class LeaderboardPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Stack(
+      body: Column(
         children: [
-          // Top background image
-          Column(
+          // Top background image with avatars overlayed
+          Stack(
             children: [
-              Image.asset(
-                "assets/leaderboard1.png",
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 280,
+              AspectRatio(
+                aspectRatio: 375 / 280, // Adjust to your image's aspect ratio
+                child: Image.asset(
+                  "assets/leaderboard1.png",
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              ),
+              // Top 3 avatars (customize positions as needed)
+              Positioned(
+                top: 30,
+                left: MediaQuery.of(context).size.width / 2 - 45,
+                child: _rankAvatar("assets/g.jpeg", "Jennifer", "7200", 45),
+              ),
+              Positioned(
+                top: 70,
+                left: 45,
+                child: _rankAvatar("assets/k.jpeg", "Hodges", "3080", 30),
+              ),
+              Positioned(
+                top: 80,
+                right: 45,
+                child: _rankAvatar("assets/f.jpeg", "Charles", "2305", 30),
               ),
             ],
           ),
-          // Top 3 avatars (customize positions as needed)
-          Positioned(
-            top: 30,
-            left: MediaQuery.of(context).size.width / 2 - 45,
-            child: _rankAvatar("assets/g.jpeg", "Jennifer", "7200", 45),
-          ),
-          Positioned(
-            top: 70,
-            left: 45,
-            child: _rankAvatar("assets/k.jpeg", "Hodges", "3080", 30),
-          ),
-          Positioned(
-            top: 80,
-            right: 45,
-            child: _rankAvatar("assets/f.jpeg", "Charles", "2305", 30),
-          ),
           // List container
-          Align(
-            alignment: Alignment.bottomCenter,
+          Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height / 1.9,
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
